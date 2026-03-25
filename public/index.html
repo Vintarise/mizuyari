@@ -1,0 +1,3746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>みずやり手帳</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1c1c1a;
+  --ink-2:  #4a4a45;
+  --ink-3:  #8a8a80;
+  --paper:  #f5f3ee;
+  --paper-2:#edeae3;
+  --paper-3:#e4e0d6;
+  --green:  #2e5c2e;
+  --green-2:#4a7c4a;
+  --green-pale: #e8f0e8;
+  --water:  #3a6b8a;
+  --water-pale: #e3eef5;
+  --urgent: #8a3a2e;
+  --urgent-pale: #f5ebe8;
+  --soon:   #7a6020;
+  --soon-pale: #f5f0e0;
+  --r: 12px;
+  --shadow: 0 2px 12px rgba(28,28,26,.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--ink);
+  padding: 14px 16px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-logo {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: .12em;
+  flex: 1;
+}
+.header-logo span { opacity: .5; font-size: 11px; display: block; letter-spacing: .08em; margin-top: 1px; }
+.header-date {
+  font-size: 11px;
+  color: rgba(255,255,255,.55);
+  text-align: right;
+  line-height: 1.5;
+}
+.header-date b { display: block; font-size: 15px; color: #fff; font-family: 'Shippori Mincho', serif; }
+.season-chip {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,.8);
+}
+
+/* ── NAV TABS ── */
+.nav {
+  background: var(--ink);
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,.08);
+  position: sticky;
+  top: 56px;
+  z-index: 55;
+}
+.nav-btn {
+  flex: 1;
+  padding: 9px 4px 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,.4);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.nav-btn .nav-icon { font-size: 15px; }
+.nav-btn.active { color: #fff; border-bottom-color: #fff; }
+
+/* ── SUMMARY BAR ── */
+.summary {
+  display: flex;
+  background: var(--paper-2);
+  border-bottom: 1px solid var(--paper-3);
+}
+.sum-item {
+  flex: 1;
+  padding: 10px 4px;
+  text-align: center;
+  border-right: 1px solid var(--paper-3);
+  cursor: pointer;
+  transition: background .15s;
+}
+.sum-item:last-child { border-right: none; }
+.sum-item:hover { background: var(--paper-3); }
+.sum-item.active-filter { background: var(--ink); }
+.sum-item.active-filter .sum-num,
+.sum-item.active-filter .sum-label { color: #fff; }
+.sum-num { font-size: 22px; font-weight: 700; font-family: 'Shippori Mincho', serif; display: block; line-height: 1; }
+.sum-label { font-size: 9px; color: var(--ink-3); display: block; margin-top: 3px; letter-spacing: .05em; }
+.sum-urgent .sum-num { color: var(--urgent); }
+.sum-soon .sum-num { color: var(--soon); }
+.sum-ok .sum-num { color: var(--green); }
+
+/* ── LOCATION STRIP ── */
+.loc-strip-wrap { background: var(--paper-2); overflow-x: auto; border-bottom: 1px solid var(--paper-3); }
+.loc-strip-wrap::-webkit-scrollbar { display: none; }
+.loc-strip { display: flex; min-width: max-content; padding: 0 8px; gap: 2px; }
+.loc-chip {
+  padding: 7px 12px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.loc-chip.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* ── PLANT LIST ── */
+.plant-list { padding: 8px 10px 90px; display: flex; flex-direction: column; gap: 6px; }
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--ink-3);
+  padding: 10px 4px 4px;
+  text-transform: uppercase;
+  border-top: 1px solid var(--paper-3);
+  margin-top: 4px;
+}
+.section-label:first-child { border-top: none; margin-top: 0; }
+.loc-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  padding: 12px 4px 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Shippori Mincho', serif;
+}
+
+/* ── PLANT CARD ── */
+.card {
+  background: var(--paper-2);
+  border: 1px solid var(--paper-3);
+  border-radius: var(--r);
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .12s;
+  position: relative;
+}
+.card:active { transform: scale(.99); }
+.card.urgent { background: var(--urgent-pale); border-color: #ddc0bc; }
+.card.soon   { background: var(--soon-pale);   border-color: #ddd0a0; }
+
+.card-accent { width: 3px; flex-shrink: 0; }
+.urgent .card-accent { background: var(--urgent); }
+.soon   .card-accent { background: var(--soon); }
+.ok     .card-accent { background: var(--paper-3); }
+
+.card-icon {
+  width: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: rgba(255,255,255,.4);
+  position: relative;
+  overflow: hidden;
+}
+.card-icon img { width: 56px; height: 100%; object-fit: cover; display: block; }
+
+.card-body { flex: 1; padding: 10px 8px; min-width: 0; }
+.card-name {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Shippori Mincho', serif;
+}
+.card-meta { font-size: 10px; color: var(--ink-3); margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+.card-cat {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  background: var(--green-pale);
+  color: var(--green);
+  font-weight: 700;
+  margin-top: 4px;
+  display: inline-block;
+}
+.card-memo { font-size: 10px; color: var(--ink-3); font-style: italic; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.days-badge {
+  text-align: center;
+  padding: 5px 7px;
+  border-radius: 8px;
+  min-width: 46px;
+}
+.days-badge .dn { font-size: 18px; font-weight: 700; line-height: 1; font-family: 'Shippori Mincho', serif; }
+.days-badge .dl { font-size: 9px; opacity: .6; }
+.urgent .days-badge { background: rgba(138,58,46,.1); color: var(--urgent); }
+.soon   .days-badge { background: rgba(122,96,32,.1); color: var(--soon); }
+.ok     .days-badge { background: var(--paper-3); color: var(--ink-2); }
+
+.water-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--paper-3);
+  background: #fff;
+  color: var(--water);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.water-btn:hover { background: var(--water); color: #fff; border-color: var(--water); }
+
+/* ── FAB ── */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 50%;
+  transform: translateX(50%);
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 28px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(46,92,46,.35);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform .15s, box-shadow .15s;
+  max-width: 460px;
+  width: calc(100% - 40px);
+  justify-content: center;
+}
+.fab:hover { transform: translateX(50%) translateY(-2px); box-shadow: 0 6px 24px rgba(46,92,46,.4); }
+.fab-icon { font-size: 18px; }
+
+/* ── SHEETS / OVERLAYS ── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(28,28,26,.6);
+  z-index: 100;
+  align-items: flex-end;
+  justify-content: center;
+}
+.overlay.open { display: flex; }
+.sheet {
+  background: var(--paper);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp .25s cubic-bezier(.32,.72,0,1);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--paper-3);
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+.sheet-header {
+  padding: 16px 18px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--paper-3);
+}
+.sheet-icon {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  background: var(--green-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.sheet-icon img { width: 48px; height: 48px; object-fit: cover; }
+.sheet-title { font-size: 15px; font-weight: 700; font-family: 'Shippori Mincho', serif; }
+.sheet-sub { font-size: 11px; color: var(--ink-3); margin-top: 3px; }
+.sheet-body { padding: 16px 18px; }
+.sheet-footer {
+  padding: 12px 18px 20px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid var(--paper-3);
+  background: var(--paper);
+  position: sticky;
+  bottom: 0;
+}
+
+/* ── FORM ELEMENTS ── */
+.form-group { margin-bottom: 14px; }
+.form-label {
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 700;
+  letter-spacing: .05em;
+  display: block;
+  margin-bottom: 5px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--paper-3);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--paper-2);
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--green); }
+.form-textarea { min-height: 60px; resize: vertical; }
+.form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-divider {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  color: var(--ink-3);
+  padding: 12px 0 8px;
+  border-top: 1px solid var(--paper-3);
+  margin-top: 8px;
+}
+.form-divider:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+
+/* アドバイス付きラベル */
+.form-hint {
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-top: 4px;
+  line-height: 1.6;
+}
+
+/* 写真アップロード */
+.photo-area {
+  border: 1.5px dashed var(--paper-3);
+  border-radius: 8px;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.photo-area:hover { border-color: var(--green); }
+.photo-thumb {
+  width: 44px; height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: none;
+  flex-shrink: 0;
+}
+.photo-thumb.show { display: block; }
+.photo-text { flex: 1; font-size: 12px; color: var(--ink-3); }
+.photo-del {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ddc0bc;
+  background: var(--urgent-pale);
+  color: var(--urgent);
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  display: none;
+}
+.photo-del.show { display: block; }
+
+/* カテゴリ選択 */
+.cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.cat-btn {
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1.5px solid var(--paper-3);
+  background: var(--paper-2);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: left;
+  transition: all .15s;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.cat-btn.active { border-color: var(--green); background: var(--green-pale); }
+.cat-btn .cat-icon { font-size: 18px; flex-shrink: 0; }
+.cat-btn .cat-name { font-weight: 700; font-size: 11px; color: var(--ink); }
+.cat-btn .cat-desc { font-size: 9px; color: var(--ink-3); margin-top: 2px; line-height: 1.4; }
+.cat-btn.active .cat-name { color: var(--green); }
+
+/* AI判定ボタン */
+.ai-detect-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--green);
+  background: transparent;
+  color: var(--green);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all .15s;
+  margin-top: 8px;
+}
+.ai-detect-btn:hover { background: var(--green-pale); }
+.ai-detect-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* 活力剤チップ */
+.add-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.add-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--paper-3);
+  background: var(--paper-2);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.add-chip.active { background: var(--green-pale); border-color: var(--green); font-weight: 700; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  flex: 2;
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+  letter-spacing: .06em;
+}
+.btn-primary:hover { opacity: .88; }
+.btn-primary.green { background: var(--green); }
+.btn-secondary {
+  flex: 1;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1.5px solid var(--paper-3);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-secondary:hover { background: var(--paper-3); }
+.btn-danger {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddc0bc;
+  background: var(--urgent-pale);
+  color: var(--urgent);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ── DETAIL SHEET ── */
+.freq-card {
+  background: var(--green-pale);
+  border: 1px solid #c0d8c0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.freq-card .freq-main { font-size: 14px; font-weight: 700; color: var(--green); font-family: 'Shippori Mincho', serif; }
+.freq-card .freq-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; line-height: 1.6; }
+.freq-card .freq-status { font-size: 12px; font-weight: 700; margin-top: 6px; }
+.freq-status.urgent { color: var(--urgent); }
+.freq-status.soon   { color: var(--soon); }
+.freq-status.ok     { color: var(--green); }
+
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.info-cell { background: var(--paper-2); border-radius: 8px; padding: 8px 10px; }
+.info-cell .ic-label { font-size: 9px; color: var(--ink-3); font-weight: 700; letter-spacing: .08em; }
+.info-cell .ic-val { font-size: 12px; font-weight: 700; margin-top: 3px; }
+
+.det-section { margin-bottom: 14px; }
+.det-section h4 { font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+
+.hist-list { list-style: none; max-height: 240px; overflow-y: auto; }
+.hist-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--paper-3);
+  font-size: 12px;
+}
+.hist-item:last-child { border-bottom: none; }
+.hist-item .hist-date { font-weight: 700; color: var(--ink); }
+.hist-item .hist-meta { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+.hist-eval { font-size: 10px; color: var(--green-2); font-style: italic; margin-top: 3px; line-height: 1.5; }
+
+/* ── EVAL BOX ── */
+.eval-box {
+  background: var(--green-pale);
+  border: 1px solid #c0d8c0;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.eval-stars { font-size: 16px; margin-bottom: 6px; }
+.eval-label { font-size: 11px; color: var(--ink-3); margin-bottom: 8px; font-weight: 700; }
+.eval-comment { font-size: 13px; line-height: 1.8; color: var(--ink); white-space: pre-wrap; }
+.eval-loading { text-align: center; padding: 20px 0; color: var(--ink-3); font-size: 13px; }
+
+/* ── MANAGE TAB ── */
+.manage-wrap { padding: 0 0 80px; }
+.manage-card {
+  background: var(--paper-2);
+  border: 1px solid var(--paper-3);
+  border-radius: var(--r);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  margin: 0 10px 6px;
+}
+.mg-icon {
+  width: 56px; height: 72px;
+  flex-shrink: 0;
+  background: var(--paper-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  overflow: hidden;
+}
+.mg-icon img { width: 56px; height: 72px; object-fit: cover; }
+.mg-body { flex: 1; padding: 8px 10px; min-width: 0; }
+.mg-name { font-size: 12px; font-weight: 700; font-family: 'Shippori Mincho', serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mg-sub { font-size: 10px; color: var(--ink-3); margin-top: 3px; line-height: 1.5; }
+.mg-acts { display: flex; gap: 4px; padding-right: 8px; flex-shrink: 0; }
+.btn-sm {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--paper-3);
+  background: var(--paper);
+  color: var(--ink-3);
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btn-sm.edit { color: var(--green-2); border-color: #c0d8c0; }
+.btn-sm.del  { color: var(--urgent); border-color: #ddc0bc; background: var(--urgent-pale); }
+
+/* ── SETTINGS TAB ── */
+.settings-section {
+  background: var(--paper-2);
+  border-top: 1px solid var(--paper-3);
+  border-bottom: 1px solid var(--paper-3);
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.settings-section h3 { font-size: 13px; font-weight: 700; font-family: 'Shippori Mincho', serif; color: var(--green); margin-bottom: 8px; }
+.settings-section p { font-size: 11px; color: var(--ink-3); line-height: 1.7; margin-bottom: 12px; }
+
+.hum-opts { display: flex; flex-direction: column; gap: 6px; }
+.hum-opt {
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--paper-3);
+  background: var(--paper);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all .15s;
+}
+.hum-opt.active { border-color: var(--green); background: var(--green-pale); }
+.hum-opt .ho-icon { font-size: 20px; }
+.hum-opt .ho-name { font-size: 12px; font-weight: 700; }
+.hum-opt .ho-desc { font-size: 10px; color: var(--ink-3); margin-top: 1px; }
+.hum-opt.active .ho-desc { color: var(--green-2); }
+
+.freq-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+.freq-table th { background: var(--green-pale); padding: 7px 8px; text-align: left; color: var(--green); font-weight: 700; }
+.freq-table td { padding: 7px 8px; border-bottom: 1px solid var(--paper-3); }
+.freq-table tr:last-child td { border-bottom: none; }
+
+/* ── STATS TAB ── */
+.stats-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--paper-3); font-size: 13px; }
+.stats-row:last-child { border-bottom: none; }
+.stats-val { font-weight: 700; color: var(--green); }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 48px 20px; color: var(--ink-3); }
+.empty .ei { font-size: 48px; margin-bottom: 12px; display: block; opacity: .5; }
+.empty p { font-size: 13px; line-height: 1.8; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  opacity: 0;
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 12px;
+  z-index: 500;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  transition: all .25s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── SEARCH ── */
+.search-bar {
+  padding: 8px 10px;
+  background: var(--paper-2);
+  border-bottom: 1px solid var(--paper-3);
+}
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1.5px solid var(--paper-3);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+}
+.search-input:focus { border-color: var(--green); }
+
+/* ── MANAGE section header ── */
+.manage-sec-header {
+  padding: 14px 14px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  font-family: 'Shippori Mincho', serif;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-top: 2px solid var(--paper-3);
+  margin-top: 4px;
+}
+.manage-sec-header:first-child { border-top: none; margin-top: 0; }
+
+/* ── DETAIL photo tap ── */
+.det-icon-wrap {
+  position: relative;
+  cursor: pointer;
+}
+.det-icon-wrap .photo-hint-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(28,28,26,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity .2s;
+  border-radius: 10px;
+}
+.det-icon-wrap:hover .photo-hint-overlay { opacity: 1; }
+
+/* ── LOCATE SHEET ── */
+.loc-manage-list { padding: 0 10px 20px; display: flex; flex-direction: column; gap: 6px; }
+.loc-item {
+  background: var(--paper-2);
+  border: 1px solid var(--paper-3);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.loc-item .li-icon { font-size: 18px; }
+.loc-item .li-name { flex: 1; font-size: 13px; font-weight: 700; }
+.loc-item .li-count { font-size: 10px; color: var(--ink-3); }
+
+/* 詳細画面フォントサイズ調整 */
+.det-memo { font-size: 13px; line-height: 1.8; background: var(--paper-2); border-radius: 8px; padding: 10px 12px; }
+
+/* ── REPOT/DETAIL BADGE ── */
+.repot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--soon-pale);
+  color: var(--soon);
+  font-weight: 700;
+  border: 1px solid #ddd0a0;
+  margin-top: 4px;
+}
+
+/* ── ONBOARDING ── */
+.onboard-tip {
+  background: var(--water-pale);
+  border: 1px solid #b8d4e8;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--water);
+  line-height: 1.7;
+  margin: 10px 10px 0;
+}
+
+/* ── 植物プロフィールカード ── */
+.plant-profile-card {
+  background: var(--green-pale);
+  border: 1px solid #b8d8b8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.ppc-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.ppc-cat { display: inline-flex; align-items: center; gap: 5px; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+.ppc-freq { font-size: 12px; color: var(--green-2); font-weight: 700; }
+.ppc-body { font-size: 13px; line-height: 1.85; color: var(--ink); white-space: pre-wrap; }
+.ppc-loading { text-align: center; padding: 16px 0; color: var(--ink-3); font-size: 13px; }
+
+/* ── リマインドバナー ── */
+.remind-banner {
+  background: var(--urgent-pale);
+  border-bottom: 2px solid #ddc0bc;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.remind-banner:hover { background: #f0dbd8; }
+.rb-icon { font-size: 22px; flex-shrink: 0; }
+.rb-text { flex: 1; }
+.rb-title { font-size: 12px; font-weight: 700; color: var(--urgent); }
+.rb-sub   { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+.rb-close { font-size: 16px; color: var(--ink-3); flex-shrink: 0; padding: 4px; background: none; border: none; cursor: pointer; }
+
+/* ── 今日の水やりシート ── */
+.today-list { display: flex; flex-direction: column; gap: 8px; }
+.today-item {
+  background: var(--paper-2); border: 1px solid var(--paper-3);
+  border-radius: 10px; display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; cursor: pointer; transition: background .12s;
+}
+.today-item:hover { background: var(--paper-3); }
+.today-item.urgent { background: var(--urgent-pale); border-color: #ddc0bc; }
+.today-item.soon   { background: var(--soon-pale);   border-color: #ddd0a0; }
+.ti-icon { font-size: 24px; flex-shrink: 0; width: 36px; text-align: center; }
+.ti-icon img { width: 36px; height: 36px; object-fit: cover; border-radius: 6px; display: block; }
+.ti-body { flex: 1; min-width: 0; }
+.ti-name { font-size: 13px; font-weight: 700; font-family: 'Shippori Mincho', serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ti-meta { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+.ti-days { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.today-item.urgent .ti-days { color: var(--urgent); }
+.today-item.soon   .ti-days { color: var(--soon); }
+
+/* ── AI診断 ── */
+.diagnose-btn {
+  width: 100%; padding: 11px; border-radius: 10px;
+  border: 1.5px solid var(--water); background: transparent; color: var(--water);
+  font-family: 'Shippori Mincho', serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 6px; transition: all .15s; letter-spacing: .04em; margin-bottom: 10px;
+}
+.diagnose-btn:hover { background: var(--water-pale); }
+.diagnose-btn:disabled { opacity: .5; cursor: not-allowed; }
+.diagnose-result {
+  background: var(--water-pale); border: 1px solid #b8d4e8;
+  border-radius: 10px; padding: 14px 16px; font-size: 13px;
+  line-height: 1.85; color: var(--ink); white-space: pre-wrap; margin-bottom: 12px;
+}
+.dr-head { font-size: 10px; font-weight: 700; color: var(--water); letter-spacing: .1em; margin-bottom: 8px; }
+
+/* ── FREEMIUM ── */
+.premium-gate {
+  background: linear-gradient(135deg, #1a2e1a 0%, #2e5c2e 100%);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  color: #fff;
+  text-align: center;
+}
+.premium-gate .pg-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+.premium-gate .pg-title { font-size: 14px; font-weight: 700; font-family: 'Shippori Mincho', serif; margin-bottom: 4px; }
+.premium-gate .pg-desc { font-size: 11px; opacity: .75; margin-bottom: 12px; line-height: 1.6; }
+.premium-gate .pg-btn {
+  background: #fff; color: var(--green); border: none; border-radius: 20px;
+  padding: 9px 24px; font-family: 'Shippori Mincho', serif; font-size: 13px;
+  font-weight: 700; cursor: pointer; transition: opacity .15s;
+}
+.premium-gate .pg-btn:hover { opacity: .88; }
+
+.lock-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--ink); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 20px; letter-spacing: .04em; vertical-align: middle; margin-left: 5px;
+}
+
+.premium-feature-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px; background: var(--paper-2);
+  border: 1px solid var(--paper-3); border-radius: 10px; margin-bottom: 6px;
+}
+.premium-feature-row .pfr-text { font-size: 13px; font-weight: 700; }
+.premium-feature-row .pfr-sub  { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+
+.plant-limit-bar {
+  background: var(--paper-2); border-bottom: 1px solid var(--paper-3);
+  padding: 7px 14px; display: flex; align-items: center; gap: 8px; font-size: 11px;
+}
+.plant-limit-bar .plb-track {
+  flex: 1; height: 4px; background: var(--paper-3); border-radius: 2px; overflow: hidden;
+}
+.plant-limit-bar .plb-fill {
+  height: 100%; background: var(--green); border-radius: 2px; transition: width .3s;
+}
+.plant-limit-bar .plb-fill.warn { background: var(--soon); }
+.plant-limit-bar .plb-fill.full { background: var(--urgent); }
+.plant-limit-bar .plb-label { color: var(--ink-3); white-space: nowrap; }
+.plant-limit-bar .plb-label b { color: var(--ink); }
+
+/* 詳細補正セクション */
+.detail-section-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  color: var(--ink-3); padding: 14px 0 8px;
+  border-top: 1px solid var(--paper-3); margin-top: 6px;
+}
+.env-card-group { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+.env-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px;
+  border: 1.5px solid var(--paper-3); background: var(--paper-2);
+  cursor: pointer; transition: all .15s; text-align: left; width: 100%;
+  font-family: inherit;
+}
+.env-card.active { border-color: var(--green); background: var(--green-pale); }
+.env-card .ec-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.env-card .ec-title { font-size: 12px; font-weight: 700; color: var(--ink); }
+.env-card .ec-desc  { font-size: 10px; color: var(--ink-3); margin-top: 1px; }
+.env-card.active .ec-title { color: var(--green); }
+
+/* ── 診断モードボタン ── */
+.diag-mode-btn {
+  flex: 1; padding: 8px; border-radius: 8px;
+  border: 1.5px solid var(--paper-3); background: var(--paper-2);
+  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  color: var(--ink-3); transition: all .15s;
+}
+.diag-mode-btn.active { border-color: var(--water); background: var(--water-pale); color: var(--water); }
+
+/* ── 天気バナー ── */
+.weather-banner {
+  background: var(--water-pale); border-bottom: 1px solid #b8d4e8;
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+}
+.wb-weather { display: flex; align-items: center; gap: 6px; flex: 1; }
+.wb-icon { font-size: 24px; }
+.wb-temps { font-size: 13px; font-weight: 700; color: var(--water); }
+.wb-desc { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+.wb-advice {
+  background: rgba(255,255,255,.6); border-radius: 8px; padding: 6px 10px;
+  font-size: 11px; color: var(--water); font-weight: 700; flex-shrink: 0;
+  max-width: 130px; text-align: center; line-height: 1.4;
+}
+.wb-advice.rain { background: rgba(184,50,50,.1); color: var(--urgent); }
+.wb-advice.good { background: rgba(46,92,46,.1); color: var(--green); }
+
+/* 特徴選択チップ */
+.feat-chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.feat-chip {
+  padding: 6px 12px; border-radius: 20px;
+  border: 1.5px solid var(--paper-3); background: var(--paper-2);
+  font-family: inherit; font-size: 12px; cursor: pointer;
+  color: var(--ink-2); transition: all .15s;
+}
+.feat-chip.active { background: var(--water-pale); border-color: var(--water); color: var(--water); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-logo">
+    みずやり手帳
+    <span>Plant Watering Journal</span>
+  </div>
+  <div class="season-chip" id="season-chip">🌸 春</div>
+  <div id="weather-header" style="display:none;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,.85);">
+    <span id="wx-icon" style="font-size:16px;"></span>
+    <span id="wx-temp"></span>
+  </div>
+  <div class="header-date">
+    <b id="hd-date">--</b>今日
+  </div>
+</header>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('list',this)">
+    <span class="nav-icon">💧</span>水やり
+  </button>
+  <button class="nav-btn" onclick="showTab('manage',this)">
+    <span class="nav-icon">🌱</span>植物管理
+  </button>
+  <button class="nav-btn" onclick="showTab('locations',this)">
+    <span class="nav-icon">📍</span>置き場所
+  </button>
+  <button class="nav-btn" onclick="showTab('stats',this)">
+    <span class="nav-icon">📊</span>集計
+  </button>
+  <button class="nav-btn" onclick="showTab('settings',this)">
+    <span class="nav-icon">⚙️</span>設定
+  </button>
+</nav>
+
+<!-- ── TAB: LIST ── -->
+<div id="tab-list">
+  <!-- 天気バナー（プレミアムかつ都市設定済み時のみ表示） -->
+  <div class="weather-banner" id="weather-banner" style="display:none">
+    <div class="wb-weather">
+      <span class="wb-icon" id="wb-icon">🌤</span>
+      <div>
+        <div class="wb-temps" id="wb-temps">--°/--°</div>
+        <div class="wb-desc" id="wb-desc">天気を取得中...</div>
+      </div>
+    </div>
+    <div class="wb-advice" id="wb-advice"></div>
+  </div>
+  <!-- 株数制限バー（無料ユーザーのみ表示） -->
+  <div class="plant-limit-bar" id="plant-limit-bar" style="display:none">
+    <span class="plb-label"><b id="plb-count">0</b>/5株</span>
+    <div class="plb-track"><div class="plb-fill" id="plb-fill" style="width:0%"></div></div>
+    <span class="plb-label" id="plb-msg">無料プラン</span>
+  </div>
+  <div class="summary">
+    <div class="sum-item sum-urgent" onclick="setStatusFilter('urgent',this)">
+      <b class="sum-num" id="cnt-u">0</b>
+      <span class="sum-label">要水やり</span>
+    </div>
+    <div class="sum-item sum-soon" onclick="setStatusFilter('soon',this)">
+      <b class="sum-num" id="cnt-s">0</b>
+      <span class="sum-label">もうすぐ</span>
+    </div>
+    <div class="sum-item sum-ok" onclick="setStatusFilter('ok',this)">
+      <b class="sum-num" id="cnt-o">0</b>
+      <span class="sum-label">良好</span>
+    </div>
+    <div class="sum-item" onclick="setStatusFilter('all',this)" id="sum-all" style="cursor:pointer">
+      <b class="sum-num" id="cnt-t">0</b>
+      <span class="sum-label">全体</span>
+    </div>
+  </div>
+
+  <div class="loc-strip-wrap">
+    <div class="loc-strip" id="loc-strip"></div>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" type="text" placeholder="🔍 植物を検索…" oninput="setSearch(this.value)">
+  </div>
+
+  <div class="plant-list" id="plant-list"></div>
+
+  <button class="fab" onclick="openAddSheet()">
+    <span class="fab-icon">＋</span> 植物を追加する
+  </button>
+</div>
+
+<!-- ── TAB: MANAGE ── -->
+<div id="tab-manage" style="display:none">
+  <div class="manage-wrap" id="manage-wrap"></div>
+</div>
+
+<!-- ── TAB: LOCATIONS ── -->
+<div id="tab-locations" style="display:none">
+  <div style="padding: 0 0 80px;">
+    <div class="settings-section">
+      <h3>📍 置き場所を追加</h3>
+      <div class="form-row2" style="margin-bottom:10px;">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">名前 *</label>
+          <input class="form-input" id="loc-inp-name" type="text" placeholder="例: リビング">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">アイコン</label>
+          <input class="form-input" id="loc-inp-icon" type="text" placeholder="🛋" maxlength="2">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label">湿度（任意）</label>
+        <select class="form-select" id="loc-inp-hum">
+          <option value="">— デフォルト湿度を使用 —</option>
+          <option value="h40">🏜 40%以下（乾燥）</option>
+          <option value="h55">🌤 40〜55%（標準）</option>
+          <option value="h70">🌦 55〜70%（やや多湿）</option>
+          <option value="h85">💦 70%以上（多湿）</option>
+        </select>
+      </div>
+      <button class="btn-primary green" style="width:100%;padding:11px;border-radius:8px;" onclick="addLocation()">📍 追加</button>
+    </div>
+    <div class="loc-manage-list" id="loc-manage-list"></div>
+  </div>
+</div>
+
+<!-- ── TAB: STATS ── -->
+<div id="tab-stats" style="display:none">
+  <div style="padding:0 0 80px;" id="stats-wrap"></div>
+</div>
+
+<!-- ── TAB: SETTINGS ── -->
+<div id="tab-settings" style="display:none">
+  <div style="padding:0 0 80px;">
+    <div class="settings-section">
+      <h3>💧 部屋の湿度設定</h3>
+      <p>湿度が高いほど土が乾きにくくなり、推奨頻度が長くなります。</p>
+      <div class="hum-opts">
+        <button class="hum-opt" id="s-hum-h40" onclick="setHumidity('h40',true)">
+          <span class="ho-icon">🏜</span>
+          <div><div class="ho-name">40%以下</div><div class="ho-desc">エアコン・暖房で乾燥 / 冬の暖房時期</div></div>
+        </button>
+        <button class="hum-opt" id="s-hum-h55" onclick="setHumidity('h55',true)">
+          <span class="ho-icon">🌤</span>
+          <div><div class="ho-name">40〜55%（標準）</div><div class="ho-desc">一般的な室内 / 春・秋</div></div>
+        </button>
+        <button class="hum-opt" id="s-hum-h70" onclick="setHumidity('h70',true)">
+          <span class="ho-icon">🌦</span>
+          <div><div class="ho-name">55〜70%</div><div class="ho-desc">加湿器使用中 / 梅雨の時期</div></div>
+        </button>
+        <button class="hum-opt" id="s-hum-h85" onclick="setHumidity('h85',true)">
+          <span class="ho-icon">💦</span>
+          <div><div class="ho-name">70%以上</div><div class="ho-desc">多湿 / 真夏 / 水槽のある部屋</div></div>
+        </button>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>🌸 現在の季節（自動判定）</h3>
+      <p>月から自動判定し、推奨水やり頻度に反映します。</p>
+      <div style="background:var(--green-pale);border-radius:8px;padding:12px 14px;font-size:12px;">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--ink-3);">現在の月</span><b id="si-month">--月</b></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--ink-3);">季節</span><b id="si-season">--</b></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--ink-3);">水やり傾向</span><b id="si-trend" style="max-width:60%;text-align:right;">--</b></div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>📊 推奨水やり頻度</h3>
+      <p>植物グループ・季節・湿度の3つで計算しています。</p>
+      <table class="freq-table" id="freq-table"></table>
+    </div>
+    <!-- プレミアムプラン管理 -->
+    <div class="settings-section" id="premium-settings-section">
+      <h3 id="premium-settings-title">👑 プレミアムプラン</h3>
+      <div id="premium-settings-body"></div>
+    </div>
+    <!-- 天気・位置設定（プレミアム） -->
+    <div class="settings-section" id="weather-settings-section">
+      <h3>🌤 天気予報連動 <span class="lock-badge" id="wx-lock-badge">PRO</span></h3>
+      <div id="weather-settings-body">
+        <p style="font-size:11px;color:var(--ink-3);line-height:1.7;margin-bottom:10px;">
+          市区町村名を設定すると天気予報と連動し、水やりアドバイスをお届けします。
+        </p>
+        <div style="display:flex;gap:8px;">
+          <input id="weather-city-input" class="form-input" type="text" placeholder="例: 東京都江東区" style="flex:1;">
+          <button onclick="saveWeatherCity()" style="padding:8px 14px;border-radius:8px;border:none;background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">設定</button>
+        </div>
+        <div id="weather-city-status" style="font-size:11px;color:var(--ink-3);margin-top:6px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     OVERLAYS
+───────────────────────────────────────── -->
+
+<!-- 植物追加シート -->
+<div class="overlay" id="ov-add" onclick="closeOv('ov-add',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon">🌱</div>
+      <div>
+        <div class="sheet-title">植物を追加する</div>
+        <div class="sheet-sub">まず名前・場所・日付だけでOK</div>
+      </div>
+    </div>
+    <div class="sheet-body" id="add-sheet-body">
+      <!-- STEP 1: 基本情報 -->
+      <div id="add-step1">
+        <div class="form-group">
+          <label class="form-label">植物名 *</label>
+          <input class="form-input" id="add-name" type="text" placeholder="例: モンステラ"
+            oninput="onPlantNameInput(this.value)"
+            onblur="onPlantNameBlur(this.value)">
+          <div id="name-detect-result" style="font-size:11px;color:var(--green-2);margin-top:5px;min-height:14px;"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">置き場所</label>
+          <select class="form-select" id="add-loc"></select>
+        </div>
+        <div class="form-row2">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">最終水やり日</label>
+            <input class="form-input" id="add-water" type="date">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">導入日（任意）</label>
+            <input class="form-input" id="add-intro" type="date">
+          </div>
+        </div>
+
+        <div class="form-divider">💧 水やりグループ</div>
+        <div id="cat-auto-msg" style="font-size:11px;color:var(--green-2);margin-bottom:8px;min-height:16px;"></div>
+        <div class="cat-grid" id="cat-grid">
+          <button class="cat-btn" data-cat="A" onclick="selectCat('A')">
+            <span class="cat-icon">🏜</span>
+            <div><div class="cat-name">乾燥に強い</div><div class="cat-desc">サンスベリア・パキラ・ドラセナ</div></div>
+          </button>
+          <button class="cat-btn" data-cat="E" onclick="selectCat('E')">
+            <span class="cat-icon">🌵</span>
+            <div><div class="cat-name">やや乾燥気味</div><div class="cat-desc">ホヤ・ペペロミア・リプサリス</div></div>
+          </button>
+          <button class="cat-btn active" data-cat="B" onclick="selectCat('B')" style="grid-column:1/-1;">
+            <span class="cat-icon">🌿</span>
+            <div><div class="cat-name">標準（デフォルト）</div><div class="cat-desc">フィカス・モンステラ・シェフレラ</div></div>
+          </button>
+          <button class="cat-btn" data-cat="C" onclick="selectCat('C')">
+            <span class="cat-icon">💧</span>
+            <div><div class="cat-name">水分を好む</div><div class="cat-desc">カラテア・アンスリウム・フィロデン</div></div>
+          </button>
+          <button class="cat-btn" data-cat="D" onclick="selectCat('D')">
+            <span class="cat-icon">🌊</span>
+            <div><div class="cat-name">多湿を好む</div><div class="cat-desc">シダ・ポトス・ベゴニア</div></div>
+          </button>
+        </div>
+        <div style="font-size:10px;color:var(--ink-3);text-align:center;margin-top:8px;">
+          名前がわからない場合は
+          <button onclick="openFeatureIdentify()" style="background:none;border:none;color:var(--water);font-size:10px;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit;">葉の特徴から探す</button>
+        </div>
+        <div id="ai-detect-result" style="display:none;"></div>
+
+        <div class="form-divider">📋 その他（任意）</div>
+        <div class="form-group">
+          <label class="form-label">📷 写真</label>
+          <div class="photo-area" onclick="document.getElementById('add-photo-input').click()">
+            <img id="add-photo-thumb" class="photo-thumb" src="" alt="">
+            <div class="photo-text" id="add-photo-text">タップして写真を選択</div>
+            <button class="photo-del" id="add-photo-del" onclick="removeAddPhoto(event)">✕</button>
+          </div>
+          <input type="file" id="add-photo-input" accept="image/*" style="display:none" onchange="handleAddPhoto(event)">
+          <div id="photo-identify-result" style="margin-top:8px;min-height:14px;"></div>
+        </div>
+        <div class="form-row2">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">購入価格（円）</label>
+            <input class="form-input" id="add-price" type="number" placeholder="1980" min="0">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">購入場所</label>
+            <input class="form-input" id="add-shop" type="text" placeholder="ビバホーム" list="shop-dl">
+            <datalist id="shop-dl"></datalist>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">メモ</label>
+          <textarea class="form-textarea" id="add-memo" placeholder="引越し祝いにもらった、など"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="closeOvD('ov-add')">キャンセル</button>
+      <button class="btn-primary green" onclick="addPlant()">🌱 追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 水やりモーダル -->
+<div class="overlay" id="ov-water" onclick="closeOv('ov-water',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon" id="wt-icon"></div>
+      <div>
+        <div class="sheet-title" id="wt-name"></div>
+        <div class="sheet-sub" id="wt-sub"></div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div class="form-group">
+        <label class="form-label">活力剤・肥料</label>
+        <div class="add-chips" id="wt-chips"></div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="closeOvD('ov-water')">キャンセル</button>
+      <button class="btn-primary green" onclick="confirmWater()">💧 水やり記録</button>
+    </div>
+  </div>
+</div>
+
+<!-- 評価モーダル -->
+<div class="overlay" id="ov-eval" onclick="closeOv('ov-eval',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon" id="ev-icon"></div>
+      <div>
+        <div class="sheet-title" id="ev-name"></div>
+        <div class="sheet-sub">💧 水やりを記録しました</div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div id="ev-body"><div class="eval-loading">🤔 AIが評価中…</div></div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-primary" onclick="closeOvD('ov-eval')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="overlay" id="ov-detail" onclick="closeOv('ov-detail',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon det-icon-wrap" id="det-icon-wrap" onclick="triggerDetPhoto()" title="タップで写真変更">
+        <div id="det-icon-inner"></div>
+        <div class="photo-hint-overlay">📷 変更</div>
+      </div>
+      <input type="file" id="det-photo-input" accept="image/*" style="display:none" onchange="handleDetPhoto(event)">
+      <div>
+        <div class="sheet-title" id="det-name"></div>
+        <div class="sheet-sub" id="det-sub"></div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div id="det-freq"></div>
+      <div id="det-info-grid"></div>
+      <div class="det-section" id="det-memo-sec"></div>
+      <div class="det-section">
+        <h4>💧 水やり履歴</h4>
+        <ul class="hist-list" id="det-hist"></ul>
+      </div>
+      <div class="det-section" id="det-diagnose-sec">
+        <button class="diagnose-btn" id="det-diagnose-btn" onclick="openDiagnose()">
+          🔍 AIに今の状態を診断してもらう
+        </button>
+        <div id="det-diagnose-result" style="display:none"></div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="closeOvD('ov-detail')">閉じる</button>
+      <button class="btn-primary green" onclick="waterFromDetail()">💧 今日水やりする</button>
+    </div>
+  </div>
+</div>
+
+<!-- 編集モーダル -->
+<div class="overlay" id="ov-edit" onclick="closeOv('ov-edit',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon">✏️</div>
+      <div>
+        <div class="sheet-title">植物を編集</div>
+        <div class="sheet-sub" id="ed-sheet-sub"></div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div class="form-group">
+        <label class="form-label">📷 写真</label>
+        <div class="photo-area" onclick="document.getElementById('ed-photo-input').click()">
+          <img id="ed-photo-thumb" class="photo-thumb" src="" alt="">
+          <div class="photo-text" id="ed-photo-text">タップして写真を選択</div>
+          <button class="photo-del" id="ed-photo-del" onclick="removeEdPhoto(event)">✕</button>
+        </div>
+        <input type="file" id="ed-photo-input" accept="image/*" style="display:none" onchange="handleEdPhoto(event)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">植物名 *</label>
+        <input class="form-input" id="ed-name" type="text">
+      </div>
+      <div class="form-group">
+        <label class="form-label">水やりグループ</label>
+        <div class="cat-grid" id="ed-cat-grid">
+          <button class="cat-btn" data-cat="A" onclick="selectEdCat('A')"><span class="cat-icon">🏜</span><div><div class="cat-name">乾燥に強い</div></div></button>
+          <button class="cat-btn" data-cat="E" onclick="selectEdCat('E')"><span class="cat-icon">🌵</span><div><div class="cat-name">やや乾燥気味</div></div></button>
+          <button class="cat-btn" data-cat="B" onclick="selectEdCat('B')" style="grid-column:1/-1;"><span class="cat-icon">🌿</span><div><div class="cat-name">標準</div></div></button>
+          <button class="cat-btn" data-cat="C" onclick="selectEdCat('C')"><span class="cat-icon">💧</span><div><div class="cat-name">水分を好む</div></div></button>
+          <button class="cat-btn" data-cat="D" onclick="selectEdCat('D')"><span class="cat-icon">🌊</span><div><div class="cat-name">多湿を好む</div></div></button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">置き場所</label>
+        <select class="form-select" id="ed-loc"></select>
+      </div>
+      <div class="form-row2">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">最終水やり日</label>
+          <input class="form-input" id="ed-water" type="date">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">導入日</label>
+          <input class="form-input" id="ed-intro" type="date">
+        </div>
+      </div>
+      <div class="form-row2">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">植え替え年月</label>
+          <input class="form-input" id="ed-repot" type="month">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">購入価格（円）</label>
+          <input class="form-input" id="ed-price" type="number" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">購入場所</label>
+        <input class="form-input" id="ed-shop" type="text" list="shop-dl">
+      </div>
+      <div class="form-group">
+        <label class="form-label">メモ</label>
+        <textarea class="form-textarea" id="ed-memo"></textarea>
+      </div>
+
+      <!-- プレミアム：詳細補正 -->
+      <div id="ed-premium-section">
+        <div class="detail-section-title">
+          ⚙️ 詳細頻度補正
+          <span class="lock-badge" id="ed-prem-badge">PRO</span>
+        </div>
+        <div id="ed-premium-fields"><!-- JSで制御 --></div>
+      </div>
+
+      <div style="margin-top:8px;">
+        <button class="btn-danger" onclick="deletePlantFromEdit()">🗑 この植物を削除</button>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="closeOvD('ov-edit')">キャンセル</button>
+      <button class="btn-primary green" onclick="saveEdit()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 場所編集モーダル -->
+<div class="overlay" id="ov-edit-loc" onclick="closeOv('ov-edit-loc',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon">📍</div>
+      <div><div class="sheet-title">置き場所を編集</div></div>
+    </div>
+    <div class="sheet-body">
+      <div class="form-row2">
+        <div class="form-group" style="margin:0"><label class="form-label">名前 *</label><input class="form-input" id="loc-ed-name" type="text"></div>
+        <div class="form-group" style="margin:0"><label class="form-label">アイコン</label><input class="form-input" id="loc-ed-icon" type="text" maxlength="2"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">湿度</label>
+        <select class="form-select" id="loc-ed-hum">
+          <option value="">— デフォルト湿度を使用 —</option>
+          <option value="h40">🏜 40%以下</option>
+          <option value="h55">🌤 40〜55%</option>
+          <option value="h70">🌦 55〜70%</option>
+          <option value="h85">💦 70%以上</option>
+        </select>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="closeOvD('ov-edit-loc')">キャンセル</button>
+      <button class="btn-primary green" onclick="saveEditLoc()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── プレミアム誘導シート ── -->
+<div class="overlay" id="ov-premium" onclick="closeOv('ov-premium',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-body" style="padding-top:20px;">
+      <div class="premium-gate" style="margin-bottom:0;">
+        <span class="pg-icon">👑</span>
+        <div class="pg-title" id="prem-gate-title">プレミアム機能です</div>
+        <div class="pg-desc" id="prem-gate-desc">この機能はプレミアムプランでご利用いただけます</div>
+        <button class="pg-btn" onclick="closeOvD('ov-premium')">閉じる（現在ベータ版）</button>
+      </div>
+      <div style="margin-top:16px;">
+        <p style="font-size:12px;color:var(--ink-3);text-align:center;line-height:1.8;">
+          ベータ版のため現在は全機能をお試しいただけます。<br>
+          正式リリース時に有料プランを導入予定です。
+        </p>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">🌱 植物登録 無制限</div><div class="pfr-sub">無料版は5株まで</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">📷 写真から植物名認識</div><div class="pfr-sub">AI画像解析</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">🔍 AI状態診断</div><div class="pfr-sub">現在の状態・ケアアドバイス</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">🌿 植物プロフィール</div><div class="pfr-sub">追加時のAI解説</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">🪴 植え替え評価</div><div class="pfr-sub">AIによる植え替えアドバイス</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">⚙️ 詳細頻度補正</div><div class="pfr-sub">用土・鉢・サイズ・日当たり</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+          <div class="premium-feature-row">
+            <div><div class="pfr-text">📊 購入統計</div><div class="pfr-sub">購入履歴・金額集計</div></div>
+            <span class="lock-badge">PRO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-primary green" onclick="closeOvD('ov-premium')">OK、わかりました</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 特徴から植物名を推定シート ── -->
+<div class="overlay" id="ov-feature-identify" onclick="closeOv('ov-feature-identify',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon">🔍</div>
+      <div>
+        <div class="sheet-title">植物名を調べる</div>
+        <div class="sheet-sub">葉の色と形を選ぶだけで候補が絞られます</div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div class="form-group">
+        <label class="form-label">🎨 葉の色・模様</label>
+        <div class="feat-chip-group" id="feat-color">
+          <button class="feat-chip" data-key="color" data-val="solid" onclick="filterPlants(this)">緑・無地</button>
+          <button class="feat-chip" data-key="color" data-val="dark" onclick="filterPlants(this)">濃い緑</button>
+          <button class="feat-chip" data-key="color" data-val="variegated_w" onclick="filterPlants(this)">斑入り白系</button>
+          <button class="feat-chip" data-key="color" data-val="variegated_y" onclick="filterPlants(this)">斑入り黄系</button>
+          <button class="feat-chip" data-key="color" data-val="stripe" onclick="filterPlants(this)">縞・波模様</button>
+          <button class="feat-chip" data-key="color" data-val="purple" onclick="filterPlants(this)">葉裏が紫</button>
+          <button class="feat-chip" data-key="color" data-val="silver" onclick="filterPlants(this)">シルバー系</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">🍃 葉の形</label>
+        <div class="feat-chip-group" id="feat-shape">
+          <button class="feat-chip" data-key="shape" data-val="oval" onclick="filterPlants(this)">楕円・丸</button>
+          <button class="feat-chip" data-key="shape" data-val="heart" onclick="filterPlants(this)">ハート形</button>
+          <button class="feat-chip" data-key="shape" data-val="long" onclick="filterPlants(this)">細長い・剣形</button>
+          <button class="feat-chip" data-key="shape" data-val="split" onclick="filterPlants(this)">切れ込みあり</button>
+          <button class="feat-chip" data-key="shape" data-val="arrow" onclick="filterPlants(this)">矢尻・三角</button>
+          <button class="feat-chip" data-key="shape" data-val="compound" onclick="filterPlants(this)">複数の小葉</button>
+          <button class="feat-chip" data-key="shape" data-val="wavy" onclick="filterPlants(this)">波打ち・フリル</button>
+        </div>
+      </div>
+      <!-- リアルタイム絞り込み結果 -->
+      <div id="feature-identify-result"></div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="resetFeatureFilter()">リセット</button>
+      <button class="btn-secondary" onclick="closeOvD('ov-feature-identify')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 植え替え評価シート ── -->
+<div class="overlay" id="ov-repot-eval" onclick="closeOv('ov-repot-eval',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon" id="repot-eval-icon"></div>
+      <div>
+        <div class="sheet-title" id="repot-eval-name"></div>
+        <div class="sheet-sub">🪴 植え替え評価</div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div id="repot-eval-body"><div class="ppc-loading">🤔 AIが評価中…</div></div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-primary green" onclick="closeOvD('ov-repot-eval')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 植物プロフィール（追加後フィードバック）── -->
+<div class="overlay" id="ov-profile" onclick="closeOv('ov-profile',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon" id="prof-icon"></div>
+      <div>
+        <div class="sheet-title" id="prof-name"></div>
+        <div class="sheet-sub">🌿 この植物の性質・育て方</div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div id="prof-body">
+        <div class="ppc-loading">✨ AIが植物の性質を調べています…</div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-primary green" onclick="closeOvD('ov-profile')">わかりました！</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 今日の水やりリマインド ── -->
+<div class="overlay" id="ov-today" onclick="closeOv('ov-today',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon">💧</div>
+      <div>
+        <div class="sheet-title">今日の水やりリスト</div>
+        <div class="sheet-sub" id="today-sub"></div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div class="today-list" id="today-list"></div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="dismissRemind();closeOvD('ov-today')">あとで確認する</button>
+      <button class="btn-primary green" onclick="dismissRemind();closeOvD('ov-today')">OK、始めます！</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AI状態診断 ── -->
+<div class="overlay" id="ov-diagnose" onclick="closeOv('ov-diagnose',event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-icon" id="diag-icon"></div>
+      <div>
+        <div class="sheet-title" id="diag-name"></div>
+        <div class="sheet-sub">🔍 AI状態診断</div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <!-- 診断モード切り替え -->
+      <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <button class="diag-mode-btn active" id="diag-mode-history" onclick="setDiagMode('history')">
+          📊 履歴から診断
+        </button>
+        <button class="diag-mode-btn" id="diag-mode-photo" onclick="setDiagMode('photo')">
+          📷 写真で診断
+        </button>
+      </div>
+      <!-- 写真アップロードエリア（写真モード時のみ表示） -->
+      <div id="diag-photo-area" style="display:none;margin-bottom:12px;">
+        <div class="photo-area" onclick="document.getElementById('diag-photo-input').click()">
+          <img id="diag-photo-thumb" class="photo-thumb" src="" alt="">
+          <div class="photo-text" id="diag-photo-text">葉の写真をタップして選択</div>
+        </div>
+        <input type="file" id="diag-photo-input" accept="image/*" style="display:none" onchange="handleDiagPhoto(event)">
+        <p style="font-size:10px;color:var(--ink-3);margin-top:5px;text-align:center;">葉の色・形・状態が分かる写真が最適です</p>
+        <div id="diag-limit-msg" style="font-size:11px;color:var(--urgent);text-align:center;margin-top:4px;"></div>
+      </div>
+      <div id="diag-body">
+        <div class="ppc-loading">🔍 AIが診断中…</div>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn-secondary" onclick="closeOvD('ov-diagnose')">閉じる</button>
+      <button class="btn-primary green" id="diag-run-btn" onclick="runDiagnose()">🔍 診断する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  DATE & SEASON
+// ═══════════════════════════════════════
+const TODAY = new Date();
+const TODAY_STR = TODAY.toISOString().slice(0,10);
+const MONTH = TODAY.getMonth() + 1;
+const DAY   = TODAY.getDate();
+
+function getSeason() {
+  if (MONTH === 3)  return DAY >= 21 ? 'spring' : 'winter';
+  if (MONTH <= 5)   return 'spring';
+  if (MONTH <= 9)   return 'summer';
+  if (MONTH === 10) return DAY <= 15 ? 'summer' : 'autumn';
+  if (MONTH === 11) return 'autumn';
+  return 'winter';
+}
+const SEASON = getSeason();
+const SEASON_EMOJI = { spring:'🌸', summer:'☀️', autumn:'🍂', winter:'❄️' }[SEASON];
+const SEASON_JA    = { spring:'春', summer:'夏', autumn:'秋', winter:'冬' }[SEASON];
+const SEASON_TREND = {
+  spring: '生育期。水やり頻度が増えてきます',
+  summer: '最盛期。土の乾きが早い時期です',
+  autumn: '生育緩慢。水やりを徐々に減らします',
+  winter: '休眠期。水やりを控えめに'
+}[SEASON];
+
+// ═══════════════════════════════════════
+//  WATERING FREQUENCY
+// ═══════════════════════════════════════
+const BASE_FREQ = {
+  A: { spring:21, summer:14, autumn:28, winter:35 },
+  B: { spring:10, summer:7,  autumn:14, winter:20 },
+  C: { spring:5,  summer:3,  autumn:7,  winter:10 },
+  D: { spring:3,  summer:2,  autumn:5,  winter:7  },
+  E: { spring:14, summer:10, autumn:18, winter:25 },
+};
+const CAT_LABEL = { A:'乾燥に強い', B:'標準', C:'水分を好む', D:'多湿を好む', E:'やや乾燥気味' };
+const CAT_ICON  = { A:'🏜', B:'🌿', C:'💧', D:'🌊', E:'🌵' };
+const HUM_MULT  = { h40:0.75, h55:1.0, h70:1.25, h85:1.5 };
+const HUM_LABEL = { h40:'40%以下', h55:'40〜55%', h70:'55〜70%', h85:'70%以上' };
+const ADDS      = ['なし','リキダス','メネデール','ハイポネックス','その他'];
+const ADD_ICON  = { なし:'💧', リキダス:'🌿', メネデール:'⚗️', ハイポネックス:'🌸', その他:'✨' };
+
+// デフォルト既存データ（v6と互換 — カテゴリはPLANT_CATから派生）
+const KNOWN_CATS = {
+  // A: 乾燥に強い
+  'サンスベリア':'A','サンスベリア・トリファッシアータ':'A','サンセベリア':'A',
+  'ザミオクルカス':'A','ザミオクルカス・レイブン':'A','ZZプランツ':'A','zzプランツ':'A',
+  'パキラ':'A','パキラ（斑なし）':'A','斑入りパキラ':'A',
+  'ドラセナ':'A','ドラセナ・コンパクタ':'A','ドラセナ・ジェイドジュエル':'A','ドラセナ・マルギナータ':'A','ドラセナ・サンデリアーナ':'A','幸福の木':'A',
+  'コルジリネ':'A','ユッカ':'A','青年の木':'A','アガベ':'A','アロエ':'A',
+  'サボテン':'A','仙人掌':'A','柱サボテン':'A','団扇サボテン':'A','金鯱':'A','烏羽玉':'A',
+  '多肉植物':'A','多肉':'A','クラッスラ':'A','カランコエ':'A','グラプトペタルム':'A',
+  'オプンチア':'A','マミラリア':'A','ギムノカリキウム':'A','エキノプシス':'A',
+  // B: 標準
+  'エバーフレッシュ':'B',
+  'モンステラ':'B','モンステラ（リビング）':'B','モンステラ・タイコンステレーション':'B','モンステラ・デリシオーサ':'B','モンステラ・アダンソニー':'B','ヒメモンステラ':'B',
+  'ストレリチア':'B','ストレリチア・レギネ':'B','ストレリチア・オーガスタ':'B','極楽鳥花':'B',
+  'シェフレラ':'B','シェフレラ・ハッピーイエロー':'B','カポック':'B','ホンコンカポック':'B',
+  'フィカス':'B','フィカス・ベンジャミン':'B','フィカス・ベンジャミン・ヌダ':'B','フィカス・ベンガレンシス':'B','フィカス・ソフィア':'B','フィカス・スイートハート':'B','フィカス・アルテシマ':'B','フィカス・リラータ':'B','カシワバゴム':'B','ゴムの木':'B','ベンジャミン':'B','ベンジャミン・バロック':'B','インドゴムの木':'B','ウンベラータ':'B',
+  'アグラオネマ':'B','アグラオネマ・マリア':'B',
+  'ホマロメナ':'B','ホマロメナ・ワリシー・カモフラージュ':'B',
+  'アロカシア・ニンジャ':'B','シンゴニウム':'B','クロトン':'B','コジアウン':'B','ディフェンバキア':'B','ツピタンサス':'B','ポリシャス':'B',
+  // C: 水分を好む
+  'カラテア':'C','カラテア・ホワイトスター':'C','カラテア・マコヤナ':'C','カラテア・ランキフォリア':'C','カラテア・ゼブリナ':'C','カラテア・オービフォリア':'C','カラテア・ルフィバルバ':'C',
+  'クテナンテ':'C','クテナンテ・アマグリス':'C',
+  'トリオスター':'C','ストロマンテ':'C',
+  'マランタ':'C','マランタ・レウコネウラ':'C',
+  'スパティフィラム':'C','スパティフィラム・センセーショナル・バリエガータ':'C','スパシフィラム':'C',
+  'アンスリウム':'C','アンスリウム・クリスタルナム':'C','アンスリウム・ベイチー':'C','アンスリウム・クラリネルビウム':'C',
+  'アロカシア':'C','アロカシア・オドラ・バリエガータ・バティック':'C','アロカシア・アマゾニカ':'C','アロカシア・マクロリザ':'C','クワズイモ':'C',
+  'フィロデンドロン':'C','フィロデンドロン・エルチョコレッド':'C','フィロデンドロン・プリンス・オブ・オレンジ':'C','フィロデンドロン・バーキン':'C','フィロデンドロン・ピンクプリンセス':'C','セローム':'C',
+  'カラジウム':'C','ゼランシア':'C',
+  // D: 多湿を好む
+  'ポトス':'D','ポトス・エンジョイ':'D','ポトス・ゴールデン':'D','ポトス・マーブルクイーン':'D',
+  'エスキナンサス':'D',
+  'オリヅルラン':'D','オリヅルラン・ボニー':'D',
+  'ネフロレピス':'D','ネフロレピス（新株）':'D','ネフロレピス・ブロンド':'D','ネフロレピス・スコッチ（eスコッチ）':'D','ボストンファーン':'D','タマシダ':'D',
+  'スコッチシダ':'D','シダ':'D','アジアンタム':'D','ビカクシダ':'D','コウモリラン':'D',
+  'ベゴニア':'D','ベゴニア・マクラータ（旧株）':'D','ベゴニア・マクラータ（新株）':'D','ベゴニア・マクラータ':'D',
+  'スキンダプサス':'D','シッサス':'D','グレープアイビー':'D','フィットニア':'D','モザイクプランツ':'D',
+  // E: やや乾燥気味
+  'ホヤ':'E','ホヤ・クミンギヤナ':'E','ホヤ・カルノーサ':'E','ホヤ・オボバタ':'E','サクララン':'E',
+  'リプサリス':'E',
+  'ペペロミア':'E','ペペロミア・カペラータ':'E','ペペロミア・オブツシフォリア':'E','ペペロミア・サンデルシー':'E','スイカペペロミア':'E',
+  'ゲオゲナンツス':'E','セダム':'E','エケベリア':'E','ハオルチア':'E','ガステリア':'E',
+  // 漢字・和名・通称
+  'シュロチク':'B','棕櫚竹':'B','雲南シュロチク':'B','雲南棕櫚竹':'B','観音竹':'B','カンノンチク':'B','観音棕櫚竹':'B',
+  'チャメドレア':'B','テーブルヤシ':'B','ナツメヤシ':'B','アレカヤシ':'B','ケンチャヤシ':'B',
+  'ガジュマル':'B','万年青':'B','オモト':'B',
+  'クワズイモ':'C','里芋':'C',
+  'コウモリラン':'D','麋角蕨':'D','ビカクシダ':'D',
+  'ハートカズラ':'E','リトープス':'A','コノフィツム':'A',
+  'シンビジウム':'C','胡蝶蘭':'C','ファレノプシス':'C','デンドロビウム':'C',
+  'ポインセチア':'B','シクラメン':'B',
+};
+// 前方一致・部分一致でグループを取得
+function lookupCatFuzzy(name) {
+  const n = name.trim();
+  // 完全一致
+  if (KNOWN_CATS[n]) return KNOWN_CATS[n];
+  // 前方・末尾・部分一致
+  for (const [key, cat] of Object.entries(KNOWN_CATS)) {
+    if (n.startsWith(key) || key.startsWith(n) || n.endsWith(key) || n.includes(key)) return cat;
+  }
+  return null;
+}
+
+function getRecommendedFreq(p) {
+  const cat = p.cat || KNOWN_CATS[p.name] || 'B';
+  const base = BASE_FREQ[cat][SEASON];
+  const locHum = (() => {
+    if (!p.loc) return humidity;
+    const loc = locations.find(l => l.id === p.loc);
+    return (loc && loc.humidity) ? loc.humidity : humidity;
+  })();
+  const hm = HUM_MULT[locHum] || 1.0;
+  return Math.max(2, Math.round(base * hm));
+}
+
+function getStatus(daysSince, plant) {
+  const freq = getRecommendedFreq(plant);
+  const r = daysSince / freq;
+  if (r >= 1.0) return 'urgent';
+  if (r >= 0.7) return 'soon';
+  return 'ok';
+}
+
+// ═══════════════════════════════════════
+//  DEFAULT DATA
+// ═══════════════════════════════════════
+const DEFAULT_LOCS = [
+  {id:'living',   name:'リビング', icon:'🛋'},
+  {id:'bedroom',  name:'寝室',     icon:'🛏', humidity:'h70'},
+  {id:'entrance', name:'玄関',     icon:'🚪'},
+  {id:'balcony',  name:'ベランダ', icon:'🌤'},
+  {id:'other',    name:'その他',   icon:'📦'},
+];
+
+// 旧データからの変換用
+function migratePlant(p) {
+  return {
+    name: p.name,
+    loc:  p.loc || null,
+    lastWater: p.lastWater || null,
+    additive: p.additive || 'なし',
+    intro: p.intro || null,
+    repot: p.repot || null,
+    shop:  p.shop  || null,
+    price: p.price || null,
+    memo:  p.memo  || '',
+    photo: p.photo || null,
+    cat:   p.cat   || KNOWN_CATS[p.name] || 'B',
+    history: p.history || [],
+  };
+}
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+function loadLocs() {
+  const v6 = localStorage.getItem('pw_locs_v6');
+  if (v6) return JSON.parse(v6);
+  const old = localStorage.getItem('pw_locs_v5') || localStorage.getItem('pw_locs_v4');
+  if (old) return JSON.parse(old);
+  return DEFAULT_LOCS.map(l => ({...l}));
+}
+function loadPlants() {
+  // v2 (new)
+  const v2 = localStorage.getItem('mz_plants_v2');
+  if (v2) return JSON.parse(v2);
+  // v6 (旧) — マイグレーション
+  const v6 = localStorage.getItem('pw_plants_v6');
+  if (v6) return JSON.parse(v6).map(migratePlant);
+  return [];
+}
+function loadHumidity() {
+  const v = localStorage.getItem('pw_humidity');
+  if (v === 'low') return 'h40';
+  if (v === 'mid') return 'h55';
+  if (v === 'high') return 'h70';
+  return v || 'h55';
+}
+function loadCustomCats() {
+  const s = localStorage.getItem('pw_custom_cats');
+  return s ? JSON.parse(s) : {};
+}
+
+let locations = loadLocs();
+let plants    = loadPlants();
+let humidity  = loadHumidity();
+let customCats = loadCustomCats();
+
+// カスタムカテゴリをplantに反映
+plants.forEach(p => {
+  if (!p.cat && customCats[p.name]) p.cat = customCats[p.name];
+  if (!p.cat) p.cat = KNOWN_CATS[p.name] || 'B';
+  // 旧固有名称soilTypeを一般名称に移行
+  if (p.soilType === 'hanagokoro') p.soilType = 'organic';
+  if (p.soilType === 'protoleaf')  p.soilType = 'inorganic';
+});
+
+function saveLocs()   { localStorage.setItem('pw_locs_v6', JSON.stringify(locations)); }
+function savePlants() { localStorage.setItem('mz_plants_v2', JSON.stringify(plants)); }
+function saveHum()    { localStorage.setItem('pw_humidity', humidity); }
+
+// ═══════════════════════════════════════
+//  STATE (UI)
+// ═══════════════════════════════════════
+let curLoc    = 'all';
+let curStatus = 'all';
+let curSearch = '';
+let addCat    = 'B';
+let edCat     = 'B';
+let singleIdx = null;
+let singleAdd = 'なし';
+let detailIdx = null;
+let editIdx   = null;
+let editLocIdx = null;
+
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+function daysSince(d) { if (!d) return 9999; return Math.floor((TODAY - new Date(d)) / 86400000); }
+function fmt(d)      { if (!d) return '未実施'; const dt = new Date(d); return `${dt.getMonth()+1}/${dt.getDate()}`; }
+function fmtFull(d)  { if (!d) return null; const dt = new Date(d); return `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()}`; }
+function fmtMonth(m) { if (!m) return null; const [y, mo] = m.split('-'); return `${y}年${parseInt(mo)}月`; }
+function getLoc(id)  { return locations.find(l => l.id === id) || {name:'未設定', icon:'📦'}; }
+function getPlantIcon(p) {
+  if (p.photo) return null; // handled separately
+  const icons = { A:'🪴', B:'🌿', C:'🌺', D:'🍃', E:'🌵' };
+  return icons[p.cat || 'B'] || '🌿';
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function closeOv(id, e) { if (e.target.id === id) closeOvD(id); }
+function closeOvD(id) { document.getElementById(id).classList.remove('open'); }
+function buildLocOptions(sel, val) {
+  sel.innerHTML = '<option value="">— 未設定 —</option>' +
+    locations.map(l => `<option value="${l.id}" ${l.id === val ? 'selected' : ''}>${l.icon} ${l.name}</option>`).join('');
+}
+function updateShopDl() {
+  const shops = [...new Set(plants.map(p => p.shop).filter(Boolean))].sort((a,b) => a.localeCompare(b,'ja'));
+  document.querySelectorAll('#shop-dl').forEach(dl => {
+    dl.innerHTML = shops.map(s => `<option value="${s}">`).join('');
+  });
+}
+
+// ═══════════════════════════════════════
+//  PHOTO
+// ═══════════════════════════════════════
+function compressImage(file, maxSize, quality, cb) {
+  const r = new FileReader();
+  r.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+      else        { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(c.toDataURL('image/jpeg', quality));
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function handleAddPhoto(e) {
+  const f = e.target.files[0]; if (!f) return;
+  compressImage(f, 400, 0.70, b64 => {
+    document._addPhoto = b64;
+    const th = document.getElementById('add-photo-thumb');
+    th.src = b64; th.classList.add('show');
+    document.getElementById('add-photo-text').textContent = '写真を選択済み';
+    document.getElementById('add-photo-del').classList.add('show');
+    // 写真選択後すぐにAI植物名判定を実行
+    autoIdentifyFromPhoto(b64);
+  });
+}
+
+async function autoIdentifyFromPhoto(b64data) {
+  const res = document.getElementById('photo-identify-result');
+  const catEl = document.getElementById('cat-auto-msg');
+  res.innerHTML = `<div style="background:var(--water-pale);border:1px solid #b8d4e8;border-radius:8px;padding:10px 12px;font-size:11px;color:var(--water);">
+    ✨ AIが植物名を判定中…
+  </div>`;
+
+  const b64 = b64data.replace(/^data:image\/[a-z]+;base64,/, '');
+  const prompt = `観葉植物の専門家として、この写真の植物を特定してください。
+JSON形式のみ（前置き不要）：
+{"name":"最有力の和名","cat":"A〜E","confidence":"high/mid/low","reason":"判定根拠を1文"}
+グループ：A=乾燥に強い B=標準 C=水分好む D=多湿好む E=やや乾燥気味
+植物が特定できない場合：{"name":"","cat":"B","confidence":"low","reason":""}`;
+
+  // Vercel本番環境かどうかで送信先を切り替え
+  const isVercel = !window.location.href.includes('claude.ai');
+  const endpoint = isVercel
+    ? '/api/claude'
+    : '/api/claude';
+
+  try {
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), 45000)
+    );
+    const fetchPromise = fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 200,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+
+    const resp = await Promise.race([fetchPromise, timeoutPromise]);
+    const data = await resp.json();
+    const m = data.content?.[0]?.text?.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('no json');
+    const result = JSON.parse(m[0]);
+
+    if (!result.name) {
+      // 植物名が特定できなかった場合
+      res.innerHTML = `<div style="background:var(--paper-2);border:1px solid var(--paper-3);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--ink-3);">
+        📝 写真から植物を特定できませんでした。下の欄に植物名を入力してください。
+      </div>`;
+      setTimeout(() => document.getElementById('add-name').focus(), 100);
+      return;
+    }
+
+    // 植物名とグループを自動入力
+    document.getElementById('add-name').value = result.name;
+    if (result.cat && /^[ABCDE]$/.test(result.cat)) selectCat(result.cat);
+
+    const confLabel = result.confidence === 'high' ? '🎯 高精度' : result.confidence === 'mid' ? '🔍 中精度' : '⚠️ 要確認';
+    const confColor = result.confidence === 'high' ? 'var(--green)' : result.confidence === 'mid' ? 'var(--water)' : 'var(--soon)';
+
+    res.innerHTML = `<div style="background:var(--green-pale);border:1px solid #c0d8c0;border-radius:8px;padding:10px 12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+        <span style="font-size:13px;font-weight:700;color:var(--green);">${result.name}</span>
+        <span style="font-size:10px;font-weight:700;color:${confColor};">${confLabel}</span>
+      </div>
+      <div style="font-size:10px;color:var(--ink-3);margin-bottom:4px;">${result.reason || ''}</div>
+      <div style="font-size:10px;color:var(--ink-3);">名前が違う場合は下の欄で修正できます</div>
+    </div>`;
+    catEl.innerHTML = `✅ <b>${CAT_LABEL[result.cat]}</b> グループとして設定しました`;
+    toast(`📷 ${result.name} と判定しました`);
+
+  } catch(e) {
+    if (e.message === 'timeout' || e.message.includes('fetch') || e.message.includes('Failed')) {
+      // claude.ai環境でのタイムアウト・通信エラー → 名前入力に誘導
+      res.innerHTML = `<div style="background:var(--paper-2);border:1px solid var(--paper-3);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--ink-3);">
+        📝 写真からの自動判定は本番環境でのみ動作します。<br>植物名を入力するとグループを自動設定します。
+      </div>`;
+      setTimeout(() => document.getElementById('add-name').focus(), 100);
+    } else {
+      res.innerHTML = `<div style="background:var(--paper-2);border:1px solid var(--paper-3);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--ink-3);">
+        📝 植物名を入力してください（入力後に自動でグループを設定します）
+      </div>`;
+      setTimeout(() => document.getElementById('add-name').focus(), 100);
+    }
+  }
+}
+function removeAddPhoto(e) {
+  e.stopPropagation();
+  document._addPhoto = null;
+  const th = document.getElementById('add-photo-thumb');
+  th.src = ''; th.classList.remove('show');
+  document.getElementById('add-photo-text').textContent = 'タップして写真を選択（任意）';
+  document.getElementById('add-photo-del').classList.remove('show');
+  document.getElementById('add-photo-input').value = '';
+  document.getElementById('photo-identify-result').innerHTML = '';
+}
+
+function handleEdPhoto(e) {
+  const f = e.target.files[0]; if (!f) return;
+  compressImage(f, 800, 0.85, b64 => {
+    document._edPhoto = b64;
+    const th = document.getElementById('ed-photo-thumb');
+    th.src = b64; th.classList.add('show');
+    document.getElementById('ed-photo-text').textContent = '写真を選択済み';
+    document.getElementById('ed-photo-del').classList.add('show');
+  });
+}
+function removeEdPhoto(e) {
+  e.stopPropagation();
+  document._edPhoto = null;
+  const th = document.getElementById('ed-photo-thumb');
+  th.src = ''; th.classList.remove('show');
+  document.getElementById('ed-photo-text').textContent = 'タップして写真を選択';
+  document.getElementById('ed-photo-del').classList.remove('show');
+  document.getElementById('ed-photo-input').value = '';
+}
+
+function triggerDetPhoto() {
+  document.getElementById('det-photo-input').click();
+}
+function handleDetPhoto(e) {
+  const f = e.target.files[0]; if (!f || detailIdx === null) return;
+  compressImage(f, 800, 0.85, b64 => {
+    plants[detailIdx].photo = b64;
+    savePlants();
+    renderDetIcon(plants[detailIdx]);
+    render(); renderManage();
+    toast('📷 写真を保存しました');
+  });
+}
+function renderDetIcon(p) {
+  const wrap = document.getElementById('det-icon-inner');
+  if (p.photo) {
+    wrap.innerHTML = `<img src="${p.photo}" style="width:48px;height:48px;object-fit:cover;border-radius:10px;">`;
+  } else {
+    wrap.textContent = getPlantIcon(p) || '🌿';
+  }
+}
+
+// ═══════════════════════════════════════
+//  CATEGORY SELECTION
+// ═══════════════════════════════════════
+function selectCat(cat) {
+  addCat = cat;
+  document.querySelectorAll('#cat-grid .cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+}
+function selectEdCat(cat) {
+  edCat = cat;
+  document.querySelectorAll('#ed-cat-grid .cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+}
+
+// ═══════════════════════════════════════
+//  AI DETECT CATEGORY
+// ═══════════════════════════════════════
+// 植物名入力時のauto-detect（デバウンス付き）
+let _nameDetectTimer = null;
+function onPlantNameInput(val) {
+  clearTimeout(_nameDetectTimer);
+  const msgEl = document.getElementById('name-detect-result');
+  const catEl = document.getElementById('cat-auto-msg');
+  if (!val.trim() || val.trim().length < 2) {
+    msgEl.innerHTML = ''; catEl.innerHTML = ''; return;
+  }
+  // 内蔵DB（完全一致・前方一致）でまず即時チェック
+  const known = lookupCatFuzzy(val.trim());
+  if (known) {
+    selectCat(known);
+    catEl.innerHTML = `✅ <b>${CAT_LABEL[known]}</b> グループとして設定しました`;
+    msgEl.innerHTML = '';
+    return;
+  }
+  // 内蔵DBになければ0.5秒後にAIで判定
+  msgEl.innerHTML = '<span style="color:var(--ink-3);">✨ AIがグループを判定中…</span>';
+  _nameDetectTimer = setTimeout(() => autoDetectCatFromName(val.trim()), 500);
+}
+function onPlantNameBlur(val) {
+  clearTimeout(_nameDetectTimer);
+  if (!val.trim() || val.trim().length < 2) return;
+  if (lookupCatFuzzy(val.trim())) return;
+  autoDetectCatFromName(val.trim());
+}
+async function autoDetectCatFromName(name) {
+  const msgEl = document.getElementById('name-detect-result');
+  const catEl = document.getElementById('cat-auto-msg');
+  msgEl.innerHTML = '<span style="color:var(--ink-3);">✨ AIがグループを判定中…</span>';
+
+  // 5秒でタイムアウト → Bをデフォルト設定して終了
+  const timeoutPromise = new Promise(resolve =>
+    setTimeout(() => resolve(null), 5000)
+  );
+
+  try {
+    const fetchPromise = fetch('/api/claude', {
+      method: 'POST',
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 10,
+        messages: [{ role: 'user', content:
+          `観葉植物「${name}」の水やり頻度グループをA〜Eの1文字のみで答えてください。A=乾燥強(サンスベリア/パキラ/ドラセナ/ユッカ/多肉/サボテン) B=標準(フィカス/モンステラ/シェフレラ/ゴムの木/ヤシ類/シュロチク/ストレリチア/樹木全般) C=水分好む(カラテア/マランタ/アンスリウム/フィロデンドロン/アロカシア) D=多湿/シダ(ネフロレピス/ビカクシダ/ポトス/ベゴニア/フィットニア) E=乾燥気味(ホヤ/ペペロミア/リプサリス) 不明はB。1文字のみ回答:`
+        }]
+      })
+    }).then(r => r.json());
+
+    const data = await Promise.race([fetchPromise, timeoutPromise]);
+
+    if (!data) {
+      // タイムアウト → Bをデフォルト設定
+      selectCat('B');
+      catEl.innerHTML = `⚠️ 判定に時間がかかったため <b>標準</b> を設定しました（後から変更できます）`;
+      msgEl.innerHTML = '';
+      return;
+    }
+
+    const text = data.content?.[0]?.text?.trim().toUpperCase() || '';
+    const m = text.match(/^[ABCDE]/);
+    if (m) {
+      selectCat(m[0]);
+      catEl.innerHTML = `✅ <b>${CAT_LABEL[m[0]]}</b> グループと判定しました`;
+    }
+    msgEl.innerHTML = '';
+  } catch {
+    // エラー → Bをデフォルト設定
+    selectCat('B');
+    catEl.innerHTML = `⚠️ 判定できなかったため <b>標準</b> を設定しました（後から変更できます）`;
+    msgEl.innerHTML = '';
+  }
+}
+
+// ═══════════════════════════════════════
+//  写真から植物名・カテゴリを自動認識
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+//  特徴から植物名を推定（テキストAPIのみ使用）
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+//  植物内蔵DB（特徴→リアルタイム絞り込み）
+// ═══════════════════════════════════════
+// color: solid/dark/variegated_w/variegated_y/stripe/purple/silver
+// shape: oval/heart/long/split/arrow/compound/wavy
+const PLANT_DB = [
+  {name:'モンステラ・デリシオーサ',    cat:'B', color:['solid','dark'],         shape:['split','heart']},
+  {name:'モンステラ・タイコンステレーション', cat:'B', color:['variegated_w'],   shape:['split','oval']},
+  {name:'フィカス・ベンガレンシス',    cat:'B', color:['solid'],                shape:['oval']},
+  {name:'フィカス・ベンジャミン',      cat:'B', color:['solid','variegated_w'], shape:['oval']},
+  {name:'フィカス・リラータ（カシワバゴム）', cat:'B', color:['solid','dark'],  shape:['wavy','oval']},
+  {name:'フィカス・アルテシマ',        cat:'B', color:['variegated_y'],         shape:['oval']},
+  {name:'ゴムの木（フィカス・ロブスタ）', cat:'B', color:['dark'],             shape:['oval']},
+  {name:'パキラ',                      cat:'A', color:['solid'],                shape:['compound']},
+  {name:'サンスベリア・トリファッシアータ', cat:'A', color:['stripe','solid'],  shape:['long']},
+  {name:'ザミオクルカス（ZZ）',        cat:'A', color:['dark'],                 shape:['oval','compound']},
+  {name:'ドラセナ・コンパクタ',        cat:'A', color:['dark'],                 shape:['long']},
+  {name:'ドラセナ・マルギナータ',      cat:'A', color:['long'],                 shape:['long']},
+  {name:'シェフレラ（カポック）',      cat:'B', color:['solid'],                shape:['compound','oval']},
+  {name:'シェフレラ・ハッピーイエロー', cat:'B', color:['variegated_y'],        shape:['compound','oval']},
+  {name:'エバーフレッシュ',            cat:'B', color:['solid'],                shape:['compound']},
+  {name:'ストレリチア・レギネ',        cat:'B', color:['solid','dark'],         shape:['long','oval']},
+  {name:'アグラオネマ',                cat:'B', color:['variegated_w','silver','stripe'], shape:['oval']},
+  {name:'ホマロメナ',                  cat:'B', color:['dark'],                 shape:['heart','oval']},
+  {name:'アロカシア',                  cat:'C', color:['dark','variegated_w'],  shape:['arrow','heart']},
+  {name:'アロカシア・ニンジャ',        cat:'B', color:['silver','dark'],        shape:['arrow']},
+  {name:'カラテア・マコヤナ',          cat:'C', color:['stripe','variegated_w'],shape:['oval']},
+  {name:'カラテア・ゼブリナ',          cat:'C', color:['stripe','dark'],        shape:['oval']},
+  {name:'カラテア・ランキフォリア',    cat:'C', color:['stripe'],               shape:['long','oval']},
+  {name:'カラテア・ホワイトスター',    cat:'C', color:['variegated_w','stripe'],shape:['long']},
+  {name:'マランタ・レウコネウラ',      cat:'C', color:['stripe','variegated_w'],shape:['oval']},
+  {name:'クテナンテ',                  cat:'C', color:['stripe','silver'],      shape:['oval']},
+  {name:'トリオスター（ストロマンテ）', cat:'C', color:['variegated_w','purple'],shape:['oval']},
+  {name:'フィロデンドロン・エルチョコレッド', cat:'C', color:['dark'],          shape:['heart','arrow']},
+  {name:'フィロデンドロン・プリンス・オブ・オレンジ', cat:'C', color:['variegated_y','solid'], shape:['heart']},
+  {name:'スパティフィラム',            cat:'C', color:['solid'],                shape:['oval','long']},
+  {name:'アンスリウム',                cat:'C', color:['solid','dark'],         shape:['heart','oval']},
+  {name:'ポトス・ゴールデン',          cat:'D', color:['variegated_y','solid'], shape:['heart']},
+  {name:'ポトス・エンジョイ',          cat:'D', color:['variegated_w'],         shape:['heart']},
+  {name:'ネフロレピス（ボストンファーン）', cat:'D', color:['solid'],           shape:['compound','wavy']},
+  {name:'ベゴニア・マクラータ',        cat:'D', color:['variegated_w','silver'],shape:['arrow','oval']},
+  {name:'エスキナンサス',              cat:'D', color:['solid','dark'],         shape:['oval']},
+  {name:'オリヅルラン',                cat:'D', color:['variegated_w','stripe'],shape:['long']},
+  {name:'ホヤ・カルノーサ',            cat:'E', color:['solid'],                shape:['oval']},
+  {name:'ホヤ・クミンギヤナ',          cat:'E', color:['dark'],                 shape:['oval']},
+  {name:'リプサリス',                  cat:'E', color:['solid'],                shape:['long']},
+  {name:'ペペロミア・カペラータ',      cat:'E', color:['dark'],                 shape:['wavy','heart']},
+  {name:'ペペロミア・オブツシフォリア', cat:'E', color:['solid','variegated_w'],shape:['oval']},
+  {name:'ゲオゲナンツス',              cat:'E', color:['stripe','purple'],      shape:['oval']},
+  {name:'コルジリネ',                  cat:'B', color:['variegated_w','purple','long'], shape:['long']},
+  {name:'ユッカ',                      cat:'A', color:['solid'],                shape:['long']},
+  {name:'クロトン（コジアウン）',      cat:'B', color:['variegated_y','stripe'],shape:['oval','long']},
+  {name:'ディフェンバキア',            cat:'B', color:['variegated_w','silver'],shape:['oval']},
+  {name:'スキンダプサス',              cat:'D', color:['silver','variegated_w'],shape:['heart','oval']},
+];
+
+let featColor = null, featShape = null;
+
+function openFeatureIdentify() {
+  featColor = null; featShape = null;
+  document.querySelectorAll('.feat-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('feature-identify-result').innerHTML =
+    '<div style="color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0;">👆 上の特徴を選ぶと候補が絞られます</div>';
+  document.getElementById('ov-feature-identify').classList.add('open');
+}
+
+function filterPlants(clickedBtn) {
+  // クリックされたチップのグループ内で単一選択を切り替え
+  if (clickedBtn) {
+    const group = clickedBtn.closest('.feat-chip-group');
+    if (group) {
+      const wasActive = clickedBtn.classList.contains('active');
+      group.querySelectorAll('.feat-chip').forEach(c => c.classList.remove('active'));
+      if (!wasActive) clickedBtn.classList.add('active');
+    }
+  }
+
+  // 選択値を更新
+  const colorBtn = document.querySelector('#feat-color .feat-chip.active');
+  const shapeBtn = document.querySelector('#feat-shape .feat-chip.active');
+  featColor = colorBtn?.dataset.val || null;
+  featShape = shapeBtn?.dataset.val || null;
+
+  const res = document.getElementById('feature-identify-result');
+  if (!featColor && !featShape) {
+    res.innerHTML = '<div style="color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0;">👆 特徴を選ぶと候補が絞られます</div>';
+    return;
+  }
+
+  // スコアリング
+  const scored = PLANT_DB.map(p => {
+    let score = 0;
+    if (featColor && p.color.includes(featColor)) score += 2;
+    if (featShape && p.shape.includes(featShape)) score += 2;
+    return {...p, score};
+  }).filter(p => p.score > 0).sort((a,b) => b.score - a.score).slice(0, 8);
+
+  if (!scored.length) {
+    res.innerHTML = '<div style="color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0;">該当する植物が見つかりませんでした。別の特徴を試してください。</div>';
+    return;
+  }
+
+  res.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.05em;">
+      ${scored.length}件の候補 — タップして選択
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      ${scored.map(p => `
+        <button onclick="selectPlantFromDB('${p.name}','${p.cat}')"
+          style="padding:10px 14px;border-radius:10px;border:1.5px solid var(--paper-3);
+          background:var(--paper-2);font-family:inherit;cursor:pointer;
+          display:flex;align-items:center;justify-content:space-between;width:100%;
+          transition:background .12s;"
+          onmouseover="this.style.background='var(--green-pale)'"
+          onmouseout="this.style.background='var(--paper-2)'">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">${p.name}</span>
+          <span style="font-size:11px;color:var(--green-2);font-weight:700;">${CAT_ICON[p.cat]} ${CAT_LABEL[p.cat]}</span>
+        </button>`).join('')}
+    </div>`;
+}
+
+function selectPlantFromDB(name, cat) {
+  document.getElementById('add-name').value = name;
+  if (/^[ABCDE]$/.test(cat)) selectCat(cat);
+  closeOvD('ov-feature-identify');
+  toast(`✅ ${name} を選択しました`);
+}
+
+function resetFeatureFilter() {
+  featColor = null; featShape = null;
+  document.querySelectorAll('.feat-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('feature-identify-result').innerHTML =
+    '<div style="color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0;">👆 特徴を選ぶと候補が絞られます</div>';
+}
+
+// ═══════════════════════════════════════
+//  ADD PLANT
+// ═══════════════════════════════════════
+function openAddSheet() {
+  document._addPhoto = null;
+  const th = document.getElementById('add-photo-thumb');
+  th.src = ''; th.classList.remove('show');
+  document.getElementById('add-photo-text').textContent = 'タップして写真を選択';
+  document.getElementById('add-photo-del').classList.remove('show');
+  document.getElementById('add-photo-input').value = '';
+  // 写真エリアリセット
+  document.getElementById('photo-identify-result').innerHTML = '';
+  document.getElementById('name-detect-result').innerHTML = '';
+  document.getElementById('cat-auto-msg').innerHTML = '';
+  document.getElementById('add-name').value = '';
+  document.getElementById('add-water').value = TODAY_STR;
+  document.getElementById('add-intro').value = TODAY_STR;
+  document.getElementById('add-price').value = '';
+  document.getElementById('add-shop').value = '';
+  document.getElementById('add-memo').value = '';
+  addCat = 'B';
+  document.querySelectorAll('#cat-grid .cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'B'));
+  document.getElementById('ai-detect-result').textContent = '';
+  buildLocOptions(document.getElementById('add-loc'), '');
+  updateShopDl();
+  document.getElementById('ov-add').classList.add('open');
+}
+
+function addPlant() {
+  const name = document.getElementById('add-name').value.trim();
+  if (!name) { toast('植物名を入力してください'); return; }
+  // 株数制限チェック
+  if (!canAddPlant()) {
+    closeOvD('ov-add');
+    requirePremium('植物登録は5株まで（無料版）', '6株目以降の登録にはプレミアムプランが必要です。プレミアムプランでは無制限に登録できます。');
+    return;
+  }
+  const cat = addCat;
+  plants.push({
+    name, cat,
+    loc:       document.getElementById('add-loc').value || null,
+    lastWater: document.getElementById('add-water').value || null,
+    additive:  'なし',
+    intro:     document.getElementById('add-intro').value || null,
+    repot:     null,
+    shop:      document.getElementById('add-shop').value.trim() || null,
+    price:     document.getElementById('add-price').value ? Number(document.getElementById('add-price').value) : null,
+    memo:      document.getElementById('add-memo').value.trim(),
+    photo:     document._addPhoto || null,
+    history:   [],
+  });
+  savePlants(); closeOvD('ov-add');
+  render(); renderManage(); updateShopDl();
+  const newP = plants[plants.length-1];
+  const freq = getRecommendedFreq(newP);
+  toast(`🌱 ${name} を追加（${CAT_ICON[cat]} ${CAT_LABEL[cat]}・推奨${freq}日ごと）`);
+  // 植物プロフィール表示（プレミアムのみ）
+  if (isPremium) openPlantProfile(newP);
+}
+
+// ═══════════════════════════════════════
+//  DELETE
+// ═══════════════════════════════════════
+function deletePlantFromEdit() {
+  if (editIdx === null) return;
+  if (!confirm(`「${plants[editIdx].name}」を削除しますか？`)) return;
+  plants.splice(editIdx, 1);
+  savePlants(); closeOvD('ov-edit');
+  render(); renderManage(); toast('🗑 削除しました');
+}
+
+// ═══════════════════════════════════════
+//  WATER MODAL
+// ═══════════════════════════════════════
+function openWater(idx, e) {
+  if (e) e.stopPropagation();
+  singleIdx = idx; singleAdd = plants[idx].additive || 'なし';
+  const p = plants[idx], d = daysSince(p.lastWater), freq = getRecommendedFreq(p);
+  document.getElementById('wt-name').textContent = p.name;
+  document.getElementById('wt-sub').textContent = `最終: ${fmt(p.lastWater)}（${d === 9999 ? '未実施' : d + '日前'}）/ 推奨: ${freq}日ごと`;
+  const iconEl = document.getElementById('wt-icon');
+  if (p.photo) { iconEl.innerHTML = `<img src="${p.photo}">`; }
+  else { iconEl.textContent = getPlantIcon(p) || '🌿'; }
+  document.getElementById('wt-chips').innerHTML = ADDS.map(a =>
+    `<button class="add-chip ${a === singleAdd ? 'active' : ''}" onclick="pickWaterAdd('${a}',this)">${ADD_ICON[a]} ${a}</button>`
+  ).join('');
+  document.getElementById('ov-water').classList.add('open');
+}
+function pickWaterAdd(val, el) {
+  singleAdd = val;
+  document.querySelectorAll('#wt-chips .add-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+async function confirmWater() {
+  if (singleIdx === null) return;
+  const p = plants[singleIdx];
+  const prevDays = daysSince(p.lastWater);
+  const freq = getRecommendedFreq(p);
+  p.lastWater = TODAY_STR; p.additive = singleAdd;
+  if (!p.history) p.history = [];
+
+  // 気温を取得（バックグラウンド）
+  const temps = await fetchTodayTemps();
+  p.history.unshift({
+    date: TODAY_STR,
+    additive: singleAdd,
+    eval: null,
+    tempMax: temps.max,
+    tempMin: temps.min,
+  });
+
+  // 履歴保持期間：無料=1ヶ月、プレミアム=24ヶ月
+  const cutoff = new Date(TODAY);
+  if (isPremium) { cutoff.setMonth(cutoff.getMonth() - 24); }
+  else           { cutoff.setMonth(cutoff.getMonth() - 1); }
+  p.history = p.history.filter(h => !h.date || new Date(h.date) >= cutoff);
+
+  savePlants(); closeOvD('ov-water');
+  render();
+  if (document.getElementById('ov-detail').classList.contains('open')) openDetail(singleIdx);
+  toast(`💧 ${p.name} を記録`);
+
+  // 水やり評価（無料でも使える）
+  const evIcon = document.getElementById('ev-icon');
+  if (p.photo) { evIcon.innerHTML = `<img src="${p.photo}">`; }
+  else { evIcon.textContent = getPlantIcon(p) || '🌿'; }
+  document.getElementById('ev-name').textContent = p.name;
+  document.getElementById('ev-body').innerHTML = '<div class="eval-loading">🤔 AIが評価中…</div>';
+  document.getElementById('ov-eval').classList.add('open');
+
+  const evalResult = await evalWatering(p, prevDays, freq, temps);
+  if (p.history[0]) p.history[0].eval = evalResult;
+  savePlants();
+
+  document.getElementById('ev-body').innerHTML = `
+    <div class="eval-box">
+      <div class="eval-stars">${'⭐'.repeat(evalResult.score)}</div>
+      <div class="eval-label">${evalResult.scoreLabel}</div>
+      <div class="eval-comment">${evalResult.comment}</div>
+      ${temps.max !== null ? `<div style="font-size:10px;color:var(--ink-3);margin-top:8px;text-align:right;">🌡 今日の気温 ${temps.max}°/${temps.min}°</div>` : ''}
+    </div>`;
+  if (document.getElementById('ov-detail').classList.contains('open')) openDetail(singleIdx);
+}
+
+// ═══════════════════════════════════════
+//  CLAUDE: 水やり評価
+// ═══════════════════════════════════════
+async function evalWatering(plant, prevDays, freq, temps = {}) {
+  const cat = plant.cat || KNOWN_CATS[plant.name] || 'B';
+  const locHumId = (() => { const l = locations.find(x => x.id === plant.loc); return (l && l.humidity) ? l.humidity : humidity; })();
+  const diff = prevDays === 9999 ? '初回水やり' :
+    prevDays < freq ? `推奨より${freq - prevDays}日早め` :
+    prevDays > freq ? `推奨より${prevDays - freq}日遅め` : 'ちょうど推奨通り';
+  const tempStr = temps.max !== null ? `今日の気温: 最高${temps.max}°C / 最低${temps.min}°C` : '';
+  const prompt = `観葉植物の水やり専門家として評価してください。\n植物:${plant.name} グループ:${CAT_LABEL[cat]} 季節:${SEASON_JA} 湿度:${HUM_LABEL[locHumId]}\n${prevDays===9999?'初回水やり':`前回から${prevDays}日経過`}・推奨${freq}日・${diff}${tempStr ? `\n${tempStr}` : ''}\nJSON形式のみ: {"score":1-5,"scoreLabel":"一言","comment":"2文の評価と次回アドバイス"}`;
+  try {
+    const res = await fetch('/api/claude', {
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:250,
+        messages:[{role:'user',content:prompt}] })
+    });
+    const data = await res.json();
+    const m = data.content?.[0]?.text?.match(/\{[\s\S]*\}/);
+    return m ? JSON.parse(m[0]) : fallbackEval(prevDays, freq);
+  } catch { return fallbackEval(prevDays, freq); }
+}
+function fallbackEval(prevDays, freq) {
+  if (prevDays === 9999) return { score:5, scoreLabel:'初回記録！', comment:'初めての水やりを記録しました。これからの管理に活かしていきましょう。' };
+  const d = Math.abs(prevDays - freq);
+  if (d <= 1) return { score:5, scoreLabel:'完璧なタイミング', comment:'推奨通りのタイミングでした。この調子で続けましょう。' };
+  if (d <= 3) return { score:4, scoreLabel:'良好', comment:'ほぼ理想的なタイミングでした。' };
+  return { score:3, scoreLabel:prevDays < freq ? '少し早め' : 'やや遅め', comment:'次回は推奨間隔を意識してみましょう。' };
+}
+
+// ═══════════════════════════════════════
+//  DETAIL MODAL
+// ═══════════════════════════════════════
+function openDetail(idx) {
+  detailIdx = idx;
+  const p = plants[idx];
+  const d = daysSince(p.lastWater);
+  const freq = getRecommendedFreq(p);
+  const st = getStatus(d, p);
+  const loc = getLoc(p.loc);
+  const cat = p.cat || 'B';
+
+  // 診断結果を前の植物のものが残らないようリセット
+  const diagResult = document.getElementById('det-diagnose-result');
+  if (diagResult) { diagResult.innerHTML = ''; diagResult.style.display = 'none'; }
+  const diagBtn = document.getElementById('det-diagnose-btn');
+  if (diagBtn) diagBtn.textContent = '🔍 AIに今の状態を診断してもらう';
+
+  renderDetIcon(p);
+  document.getElementById('det-name').textContent = p.name;
+  document.getElementById('det-sub').textContent = `${loc.icon} ${loc.name}  ／  最終: ${fmt(p.lastWater)}`;
+
+  const remaining = freq - d;
+  let statusText, statusClass;
+  if (d === 9999) { statusText = 'まだ水やり記録がありません'; statusClass = 'ok'; }
+  else if (st === 'urgent') { statusText = `推奨の${freq}日を${d-freq}日超過しています`; statusClass = 'urgent'; }
+  else if (st === 'soon')   { statusText = `あと約${remaining}日で推奨時期です`;      statusClass = 'soon'; }
+  else                      { statusText = `次回まであと約${remaining}日`;            statusClass = 'ok'; }
+
+  const locHumId = (() => { const l = locations.find(x => x.id === p.loc); return (l && l.humidity) ? l.humidity : humidity; })();
+
+  document.getElementById('det-freq').innerHTML = `
+    <div class="freq-card">
+      <div class="freq-main">${CAT_ICON[cat]} ${CAT_LABEL[cat]} ／ 推奨 <b>${freq}日</b>ごと</div>
+      <div class="freq-sub">${SEASON_EMOJI} ${SEASON_JA}  ·  💧 湿度${HUM_LABEL[locHumId]}</div>
+      <div class="freq-status ${statusClass}">${statusText}</div>
+    </div>`;
+
+  const cells = [];
+  if (p.intro) cells.push(['📅 導入日', fmtFull(p.intro)]);
+  if (p.repot) cells.push(['🪴 植え替え', fmtMonth(p.repot)]);
+  if (p.shop)  cells.push(['🏪 購入場所', p.shop]);
+  if (p.price) cells.push(['💴 購入価格', `¥${Number(p.price).toLocaleString()}`]);
+  if (p.additive && p.additive !== 'なし') cells.push(['💊 活力剤', `${ADD_ICON[p.additive]} ${p.additive}`]);
+  document.getElementById('det-info-grid').innerHTML = cells.length
+    ? `<div class="info-grid">${cells.map(([l,v]) => `<div class="info-cell"><div class="ic-label">${l}</div><div class="ic-val">${v}</div></div>`).join('')}</div>` : '';
+
+  document.getElementById('det-memo-sec').innerHTML = p.memo
+    ? `<h4>📝 メモ</h4><div class="det-memo">${p.memo}</div>` : '';
+
+  const hist = (p.history || []).slice(0, 50);
+  document.getElementById('det-hist').innerHTML = hist.length
+    ? hist.map((h, i) => {
+        const prev = hist[i+1]?.date;
+        const interval = prev ? Math.floor((new Date(h.date) - new Date(prev)) / 86400000) : null;
+        const tempBadge = (h.tempMax !== null && h.tempMax !== undefined)
+          ? `<span class="hist-temp">🌡${h.tempMax}°/${h.tempMin}°</span>` : '';
+        return `<li class="hist-item">
+          <div class="hist-date">${fmtFull(h.date)}${tempBadge}</div>
+          <div class="hist-meta">${ADD_ICON[h.additive]||'💧'} ${h.additive||'なし'}${interval !== null ? `  ·  前回から${interval}日（推奨${freq}日）` : '  ·  初回'}${h.eval ? `  ·  ★${h.eval.score} ${h.eval.scoreLabel}` : ''}</div>
+          ${h.eval?.comment ? `<div class="hist-eval">${h.eval.comment}</div>` : ''}
+        </li>`;
+      }).join('')
+    : '<li class="hist-item" style="color:var(--ink-3);">記録なし</li>';
+
+  document.getElementById('ov-detail').classList.add('open');
+}
+function waterFromDetail() { closeOvD('ov-detail'); setTimeout(() => openWater(detailIdx), 180); }
+
+// ═══════════════════════════════════════
+//  EDIT PLANT
+// ═══════════════════════════════════════
+function openEdit(idx, e) {
+  if (e) e.stopPropagation();
+  editIdx = idx;
+  const p = plants[idx];
+  document.getElementById('ed-sheet-sub').textContent = p.name;
+  document.getElementById('ed-name').value = p.name;
+  edCat = p.cat || 'B';
+  document.querySelectorAll('#ed-cat-grid .cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === edCat));
+  buildLocOptions(document.getElementById('ed-loc'), p.loc || '');
+  document.getElementById('ed-water').value = p.lastWater || '';
+  document.getElementById('ed-intro').value = p.intro || '';
+  document.getElementById('ed-repot').value = p.repot || '';
+  document.getElementById('ed-shop').value  = p.shop  || '';
+  document.getElementById('ed-price').value = p.price || '';
+  document.getElementById('ed-memo').value  = p.memo  || '';
+  document._edPhoto = p.photo || null;
+  const th = document.getElementById('ed-photo-thumb');
+  const del = document.getElementById('ed-photo-del');
+  if (p.photo) { th.src = p.photo; th.classList.add('show'); del.classList.add('show'); document.getElementById('ed-photo-text').textContent = '写真を選択済み'; }
+  else { th.src = ''; th.classList.remove('show'); del.classList.remove('show'); document.getElementById('ed-photo-text').textContent = 'タップして写真を選択'; }
+  document.getElementById('ed-photo-input').value = '';
+  updateShopDl();
+  // 詳細補正フォームをレンダリング
+  renderDetailCompensation(p);
+  document.getElementById('ov-edit').classList.add('open');
+}
+
+function saveEdit() {
+  if (editIdx === null) return;
+  const p = plants[editIdx];
+  const nm = document.getElementById('ed-name').value.trim();
+  if (!nm) { toast('植物名を入力してください'); return; }
+  p.name  = nm;
+  p.cat   = edCat;
+  p.loc   = document.getElementById('ed-loc').value || null;
+  p.lastWater = document.getElementById('ed-water').value || null;
+  p.intro = document.getElementById('ed-intro').value || null;
+  p.repot = document.getElementById('ed-repot').value || null;
+  p.shop  = document.getElementById('ed-shop').value.trim() || null;
+  p.price = document.getElementById('ed-price').value ? Number(document.getElementById('ed-price').value) : null;
+  p.memo  = document.getElementById('ed-memo').value.trim();
+  if (document._edPhoto !== undefined) p.photo = document._edPhoto || null;
+  // 詳細補正（プレミアムのみ保存）
+  if (isPremium) {
+    p.soilType = document.getElementById('ed-soilType')?.value || null;
+    p.soilCustomMult = (() => {
+      const v = parseFloat(document.getElementById('ed-soilCustomMult')?.value);
+      return (!isNaN(v) && v !== 1.0) ? v : null;
+    })();
+    p.potType  = document.getElementById('ed-potType')?.value  || null;
+    p.potSize  = document.getElementById('ed-potSize')?.value  || null;
+    p.light    = document.getElementById('ed-light')?.value    || null;
+    // 植え替え年月が変わったら評価を実行
+    const prevRepot = plants[editIdx]?.repot;
+    if (p.repot && p.repot !== prevRepot) {
+      savePlants(); closeOvD('ov-edit');
+      render(); renderManage(); updateShopDl();
+      toast('✅ 保存しました');
+      if (document.getElementById('ov-detail').classList.contains('open')) openDetail(editIdx);
+      openRepotEval(editIdx);
+      return;
+    }
+  }
+  savePlants(); closeOvD('ov-edit');
+  render(); renderManage(); updateShopDl();
+  toast('✅ 保存しました');
+  if (document.getElementById('ov-detail').classList.contains('open')) openDetail(editIdx);
+}
+
+// ═══════════════════════════════════════
+//  LOCATIONS
+// ═══════════════════════════════════════
+function addLocation() {
+  const name = document.getElementById('loc-inp-name').value.trim();
+  if (!name) { toast('名前を入力してください'); return; }
+  const icon = document.getElementById('loc-inp-icon').value.trim() || '📍';
+  const hum  = document.getElementById('loc-inp-hum').value || null;
+  locations.push({ id: 'loc_' + Date.now(), name, icon, humidity: hum });
+  saveLocs(); renderLocStrip(); renderLocManage(); renderManage();
+  document.getElementById('loc-inp-name').value = '';
+  document.getElementById('loc-inp-icon').value = '';
+  document.getElementById('loc-inp-hum').value = '';
+  toast(`📍 ${name} を追加しました`);
+}
+function openEditLoc(idx, e) {
+  if (e) e.stopPropagation();
+  editLocIdx = idx;
+  const l = locations[idx];
+  document.getElementById('loc-ed-name').value = l.name;
+  document.getElementById('loc-ed-icon').value = l.icon;
+  document.getElementById('loc-ed-hum').value  = l.humidity || '';
+  document.getElementById('ov-edit-loc').classList.add('open');
+}
+function saveEditLoc() {
+  if (editLocIdx === null) return;
+  const l = locations[editLocIdx];
+  const nm = document.getElementById('loc-ed-name').value.trim();
+  if (!nm) { toast('名前を入力してください'); return; }
+  l.name = nm;
+  l.icon = document.getElementById('loc-ed-icon').value.trim() || '📍';
+  l.humidity = document.getElementById('loc-ed-hum').value || null;
+  saveLocs(); closeOvD('ov-edit-loc');
+  renderLocStrip(); renderLocManage(); render(); renderManage();
+  toast('✅ 保存しました');
+}
+function deleteLoc(idx, e) {
+  if (e) e.stopPropagation();
+  const l = locations[idx];
+  const used = plants.filter(p => p.loc === l.id).length;
+  if (used > 0 && !confirm(`「${l.name}」には${used}件の植物があります。削除しますか？`)) return;
+  plants.forEach(p => { if (p.loc === l.id) p.loc = null; });
+  locations.splice(idx, 1);
+  saveLocs(); savePlants();
+  renderLocStrip(); renderLocManage(); render(); renderManage();
+  toast('🗑 削除しました');
+}
+
+// ═══════════════════════════════════════
+//  FILTERS
+// ═══════════════════════════════════════
+function setLocFilter(loc) {
+  curLoc = loc;
+  renderLocStrip(); render();
+}
+function setStatusFilter(f, el) {
+  if (curStatus === f) { curStatus = 'all'; document.querySelectorAll('.sum-item').forEach(s => s.classList.remove('active-filter')); }
+  else { curStatus = f; document.querySelectorAll('.sum-item').forEach(s => s.classList.remove('active-filter')); el.classList.add('active-filter'); }
+  render();
+}
+function setSearch(v) { curSearch = v; render(); }
+
+// ═══════════════════════════════════════
+//  RENDER: LOC STRIP
+// ═══════════════════════════════════════
+function renderLocStrip() {
+  const el = document.getElementById('loc-strip');
+  let html = `<button class="loc-chip ${curLoc==='all'?'active':''}" onclick="setLocFilter('all')">🌿 すべて</button>`;
+  locations.forEach(l => {
+    const cnt = plants.filter(p => p.loc === l.id).length;
+    html += `<button class="loc-chip ${curLoc===l.id?'active':''}" onclick="setLocFilter('${l.id}')">${l.icon} ${l.name}（${cnt}）</button>`;
+  });
+  const noCnt = plants.filter(p => !p.loc || !locations.find(l => l.id === p.loc)).length;
+  if (noCnt > 0) html += `<button class="loc-chip ${curLoc==='none'?'active':''}" onclick="setLocFilter('none')">📦 未設定（${noCnt}）</button>`;
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+//  RENDER: MAIN LIST
+// ═══════════════════════════════════════
+function render() {
+  let u=0, s=0, o=0;
+  plants.forEach(p => {
+    const st = getStatus(daysSince(p.lastWater), p);
+    if (st === 'urgent') u++; else if (st === 'soon') s++; else o++;
+  });
+  document.getElementById('cnt-u').textContent = u;
+  document.getElementById('cnt-s').textContent = s;
+  document.getElementById('cnt-o').textContent = o;
+  document.getElementById('cnt-t').textContent = plants.length;
+  updatePlantLimitBar();
+  renderLocStrip();
+
+  let list = plants.map((p, i) => ({ ...p, _i: i, _d: daysSince(p.lastWater) }));
+  if (curLoc === 'none') list = list.filter(p => !p.loc || !locations.find(l => l.id === p.loc));
+  else if (curLoc !== 'all') list = list.filter(p => p.loc === curLoc);
+  if (curStatus !== 'all') list = list.filter(p => getStatus(p._d, p) === curStatus);
+  if (curSearch) { const q = curSearch.toLowerCase(); list = list.filter(p => p.name.toLowerCase().includes(q)); }
+
+  const el = document.getElementById('plant-list');
+  if (!list.length) {
+    if (plants.length === 0) {
+      el.innerHTML = `<div class="empty"><span class="ei">🌿</span><p>植物がまだ登録されていません</p><button onclick="openAddSheet()" style="margin-top:20px;padding:14px 32px;background:var(--green);color:#fff;border:none;border-radius:30px;font-family:'Shippori Mincho',serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.06em;box-shadow:0 4px 16px rgba(46,92,46,.3);">＋ 最初の植物を追加する</button></div>`;
+    } else {
+      el.innerHTML = `<div class="empty"><span class="ei">🌱</span><p>該当する植物がありません</p></div>`;
+    }
+    return;
+  }
+
+  const sortFn = (a, b) => {
+    const ord = { urgent:0, soon:1, ok:2 };
+    const sa = getStatus(a._d, a), sb = getStatus(b._d, b);
+    if (ord[sa] !== ord[sb]) return ord[sa] - ord[sb];
+    return (b._d / getRecommendedFreq(b)) - (a._d / getRecommendedFreq(a));
+  };
+
+  const isGrouped = curLoc === 'all' && !curSearch && curStatus === 'all';
+  let html = '';
+
+  if (isGrouped) {
+    const locOrder = [...locations.map(l => l.id), 'none'];
+    locOrder.forEach(lid => {
+      const grp = lid === 'none'
+        ? list.filter(p => !p.loc || !locations.find(l => l.id === p.loc))
+        : list.filter(p => p.loc === lid);
+      if (!grp.length) return;
+      grp.sort(sortFn);
+      const loc = lid === 'none' ? { name:'未設定', icon:'📦' } : getLoc(lid);
+      html += `<div class="loc-header">${loc.icon} ${loc.name}</div>`;
+      grp.forEach(p => { html += cardHtml(p); });
+    });
+  } else {
+    list.sort(sortFn);
+    const labels = { urgent:'要水やり', soon:'もうすぐ', ok:'良好' };
+    let lastSt = null;
+    list.forEach(p => {
+      const st = getStatus(p._d, p);
+      if (st !== lastSt) { html += `<div class="section-label">${st === 'urgent' ? '🔴' : st === 'soon' ? '🟡' : '🟢'} ${labels[st]}</div>`; lastSt = st; }
+      html += cardHtml(p);
+    });
+  }
+  el.innerHTML = html;
+}
+
+function cardHtml(p) {
+  const st = getStatus(p._d, p);
+  const freq = getRecommendedFreq(p);
+  const dn = p._d === 9999 ? '未' : p._d;
+  const dl = p._d === 9999 ? '実施' : '日';
+  const iconHtml = p.photo
+    ? `<img src="${p.photo}" alt="${p.name}" style="width:56px;height:100%;object-fit:cover;">`
+    : `<span style="font-size:26px;">${getPlantIcon(p)}</span>`;
+  const addTag = p.additive && p.additive !== 'なし'
+    ? `<span>${ADD_ICON[p.additive]} ${p.additive}</span>` : '';
+  return `
+  <div class="card ${st}" onclick="openDetail(${p._i})">
+    <div class="card-accent"></div>
+    <div class="card-icon">${iconHtml}</div>
+    <div class="card-body">
+      <div class="card-name">${p.name}</div>
+      <div class="card-meta">
+        <span>📅 ${fmt(p.lastWater)}</span>
+        <span>💧 ${freq}日ごと</span>
+        ${addTag}
+      </div>
+      <span class="card-cat">${CAT_ICON[p.cat||'B']} ${CAT_LABEL[p.cat||'B']}</span>
+    </div>
+    <div class="card-right">
+      <div class="days-badge">
+        <div class="dn">${dn}</div>
+        <div class="dl">${dl}</div>
+      </div>
+      <button class="water-btn" onclick="openWater(${p._i},event)">水やり</button>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+//  RENDER: MANAGE
+// ═══════════════════════════════════════
+function renderManage() {
+  const wrap = document.getElementById('manage-wrap');
+  const addBtnHtml = `<div style="padding:12px 10px 0;"><button onclick="openAddSheet()" style="width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:'Shippori Mincho',serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:8px;"><span style="font-size:18px;">＋</span> 植物を追加する</button></div>`;
+  if (!plants.length) {
+    wrap.innerHTML = addBtnHtml + `<div class="empty"><span class="ei">🌱</span><p>まだ植物がありません<br>上のボタンから追加してください</p></div>`;
+    return;
+  }
+  const locOrder = [...locations.map(l => l.id), 'none'];
+  let html = '';
+  locOrder.forEach(lid => {
+    const isNone = lid === 'none';
+    const grp = plants.map((p,i) => ({...p, _i:i}))
+      .filter(p => isNone ? (!p.loc || !locations.find(l => l.id === p.loc)) : p.loc === lid)
+      .sort((a,b) => a.name.localeCompare(b.name,'ja'));
+    if (!grp.length) return;
+    const loc = isNone ? { name:'未設定', icon:'📦' } : getLoc(lid);
+    html += `<div class="manage-sec-header">${loc.icon} ${loc.name} <span style="font-size:10px;color:var(--ink-3);font-weight:400;">（${grp.length}鉢）</span></div>`;
+    grp.forEach(p => {
+      const freq = getRecommendedFreq(p);
+      const iconHtml = p.photo ? `<img src="${p.photo}">` : `<span style="font-size:26px;">${getPlantIcon(p)}</span>`;
+      const sub = [
+        p.intro ? `📅 ${fmtFull(p.intro)}` : null,
+        `💧 推奨${freq}日`,
+        p.lastWater ? `最終 ${fmt(p.lastWater)}` : '未実施',
+        p.repot ? `🪴 ${fmtMonth(p.repot)}` : null,
+      ].filter(Boolean).join('  ');
+      html += `
+      <div class="manage-card">
+        <div class="mg-icon">${iconHtml}</div>
+        <div class="mg-body">
+          <div class="mg-name">${p.name}</div>
+          <div class="mg-sub">${sub}</div>
+        </div>
+        <div class="mg-acts">
+          <button class="btn-sm edit" onclick="openDetail(${p._i});showTab('list',document.querySelector('.nav-btn'))">詳細</button>
+          <button class="btn-sm edit" onclick="openEdit(${p._i})">編集</button>
+        </div>
+      </div>`;
+    });
+  });
+  wrap.innerHTML = addBtnHtml + html + '<div style="height:80px;"></div>';
+}
+
+// ═══════════════════════════════════════
+//  RENDER: LOC MANAGE
+// ═══════════════════════════════════════
+function renderLocManage() {
+  const el = document.getElementById('loc-manage-list');
+  if (!locations.length) { el.innerHTML = ''; return; }
+  el.innerHTML = locations.map((l, i) => {
+    const cnt = plants.filter(p => p.loc === l.id).length;
+    const humLabel = l.humidity ? HUM_LABEL[l.humidity] : `デフォルト（${HUM_LABEL[humidity]}）`;
+    return `
+    <div class="loc-item">
+      <span class="li-icon">${l.icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="li-name">${l.name}</div>
+        <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">💧 ${humLabel}  ·  ${cnt}鉢</div>
+      </div>
+      <button class="btn-sm edit" onclick="openEditLoc(${i})">編集</button>
+      <button class="btn-sm del"  onclick="deleteLoc(${i})">削除</button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER: STATS
+// ═══════════════════════════════════════
+function renderStats() {
+  const wrap = document.getElementById('stats-wrap');
+  if (!isPremium) {
+    wrap.innerHTML = `
+      <div style="padding:16px;">
+        <div class="premium-gate">
+          <span class="pg-icon">📊</span>
+          <div class="pg-title">購入統計</div>
+          <div class="pg-desc">月ごとの購入額・購入場所ごとの集計など<br>コレクションの統計をまとめて確認できます</div>
+          <button class="pg-btn" onclick="requirePremium('購入統計','購入履歴・金額・店舗の統計を確認できます')">🔒 プレミアムで解放</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const monthly = {};
+  plants.forEach(p => {
+    if (!p.intro || !p.price) return;
+    const ym = p.intro.slice(0,7);
+    monthly[ym] = (monthly[ym]||0) + Number(p.price);
+  });
+  const mKeys = Object.keys(monthly).sort().reverse();
+  const monthlyHTML = !mKeys.length
+    ? '<p style="font-size:12px;color:var(--ink-3);">購入価格が登録されると表示されます</p>'
+    : `<div class="stats-row" style="font-size:12px;font-weight:700;border-bottom:2px solid var(--paper-3);"><span>合計</span><span class="stats-val">¥${Object.values(monthly).reduce((a,b)=>a+b,0).toLocaleString()}</span></div>` +
+      mKeys.map(ym => { const [y,mo] = ym.split('-'); return `<div class="stats-row"><span>${y}年${parseInt(mo)}月</span><span class="stats-val">¥${monthly[ym].toLocaleString()}</span></div>`; }).join('');
+
+  const shops = {};
+  plants.forEach(p => { if (p.shop) shops[p.shop] = (shops[p.shop]||0) + 1; });
+  const sKeys = Object.keys(shops).sort((a,b) => shops[b]-shops[a]);
+  const shopsHTML = !sKeys.length
+    ? '<p style="font-size:12px;color:var(--ink-3);">購入場所が登録されると表示されます</p>'
+    : sKeys.map(s => `<div class="stats-row"><span>🏪 ${s}</span><span class="stats-val">${shops[s]}鉢</span></div>`).join('');
+
+  wrap.innerHTML = `
+    <div class="settings-section"><h3>📅 月ごとの購入額</h3>${monthlyHTML}</div>
+    <div class="settings-section"><h3>🏪 購入場所ごとの植物数</h3>${shopsHTML}</div>`;
+}
+
+// ═══════════════════════════════════════
+//  HUMIDITY
+// ═══════════════════════════════════════
+function setHumidity(val, save) {
+  humidity = val;
+  if (save) saveHum();
+  ['h40','h55','h70','h85'].forEach(h => {
+    document.getElementById('s-hum-'+h)?.classList.toggle('active', h === val);
+  });
+  render(); renderFreqTable();
+}
+
+// ═══════════════════════════════════════
+//  FREQ TABLE
+// ═══════════════════════════════════════
+function renderFreqTable() {
+  const reps = {
+    A:'サンスベリア・パキラ・ドラセナ',
+    B:'フィカス・モンステラ・シェフレラ',
+    C:'カラテア・アンスリウム・フィロデン',
+    D:'ネフロレピス・ポトス・ベゴニア',
+    E:'ホヤ・ペペロミア・リプサリス',
+  };
+  const rows = ['A','B','C','D','E'].map(c => {
+    const base = BASE_FREQ[c][SEASON];
+    const hm = HUM_MULT[humidity] || 1.0;
+    return { c, f: Math.max(2, Math.round(base * hm)) };
+  }).sort((a,b) => a.f - b.f);
+  const el = document.getElementById('freq-table');
+  if (el) el.innerHTML = `<tr><th>グループ</th><th>推奨頻度</th><th>代表例</th></tr>` +
+    rows.map(({c,f}) => `<tr><td>${CAT_ICON[c]} ${CAT_LABEL[c]}</td><td><b>${f}日ごと</b></td><td style="font-size:10px;color:var(--ink-3);">${reps[c]}</td></tr>`).join('');
+}
+
+// ═══════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════
+function showTab(tab, btn) {
+  ['list','manage','locations','stats','settings'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (tab === 'manage')    renderManage();
+  if (tab === 'locations') renderLocManage();
+  if (tab === 'stats')     renderStats();
+  if (tab === 'settings') {
+    renderFreqTable();
+    renderPremiumSettings();
+    document.getElementById('si-month').textContent = `${MONTH}月`;
+    document.getElementById('si-season').textContent = `${SEASON_EMOJI} ${SEASON_JA}`;
+    document.getElementById('si-trend').textContent = SEASON_TREND;
+    // 天気設定を初期化
+    const lockBadge = document.getElementById('wx-lock-badge');
+    if (lockBadge) lockBadge.style.display = isPremium ? 'none' : '';
+    const settingsBody = document.getElementById('weather-settings-body');
+    if (settingsBody) {
+      if (isPremium) {
+        // プレミアム：常に入力フォームを表示（一度ゲートで上書きされていても復元）
+        const city = loadWeatherCity();
+        settingsBody.innerHTML = `
+          <p style="font-size:11px;color:var(--ink-3);line-height:1.7;margin-bottom:10px;">
+            市区町村名を設定すると天気予報と連動し、水やりアドバイスをお届けします。
+          </p>
+          <div style="display:flex;gap:8px;">
+            <input id="weather-city-input" class="form-input" type="text" placeholder="例: 東京都江東区" style="flex:1;" value="${city}">
+            <button onclick="saveWeatherCity()" style="padding:8px 14px;border-radius:8px;border:none;background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">設定</button>
+          </div>
+          <div id="weather-city-status" style="font-size:11px;color:var(--ink-3);margin-top:6px;">${city ? `現在の設定: 「${city}」` : ''}</div>`;
+      } else {
+        // 非プレミアム：ゲートを表示
+        settingsBody.innerHTML = `
+          <div class="premium-gate" style="margin:0;">
+            <span class="pg-icon">🌤</span>
+            <div class="pg-title">天気予報連動</div>
+            <div class="pg-desc">天気予報と水やりを連動させ、最適なタイミングをお知らせします</div>
+            <button class="pg-btn" onclick="requirePremium('天気予報連動','プレミアムプランで天気予報と水やりが連動します')">🔒 プレミアムで解放</button>
+          </div>`;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════
+//  ① 植物プロフィール（追加後フィードバック）
+// ═══════════════════════════════════════
+async function openPlantProfile(p) {
+  const cat = p.cat || 'B';
+  const freq = getRecommendedFreq(p);
+  const iconEl = document.getElementById('prof-icon');
+  if (p.photo) { iconEl.innerHTML = `<img src="${p.photo}" style="width:48px;height:48px;object-fit:cover;border-radius:10px;">`; }
+  else { iconEl.textContent = getPlantIcon(p) || '🌿'; }
+  document.getElementById('prof-name').textContent = p.name;
+  document.getElementById('prof-body').innerHTML = `<div class="ppc-loading">✨ AIが植物の性質を調べています…</div>`;
+  document.getElementById('ov-profile').classList.add('open');
+
+  const prompt = `観葉植物「${p.name}」について、初心者向けに以下の形式で簡潔に教えてください。
+JSON形式のみで回答（他の文字不要）：
+{"trait":"この植物の水分グループと乾燥耐性を1文で（例：乾燥に非常に強く、水やりを忘れがちな人に向いています）","care":"初心者が特に気をつけるべき育て方のポイントを2〜3文","warning":"やりがちな失敗と対処法を1文","season":"${SEASON_JA}の現在、特に注意すべきことを1文"}`;
+
+  try {
+    const res = await fetch('/api/claude', {
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400,
+        messages:[{role:'user', content:prompt}] })
+    });
+    const data = await res.json();
+    const m = data.content?.[0]?.text?.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('no json');
+    const info = JSON.parse(m[0]);
+    document.getElementById('prof-body').innerHTML = `
+      <div class="plant-profile-card">
+        <div class="ppc-head">
+          <span class="ppc-cat">${CAT_ICON[cat]} ${CAT_LABEL[cat]}</span>
+          <span class="ppc-freq">推奨 ${freq}日ごと（${SEASON_EMOJI}${SEASON_JA}）</span>
+        </div>
+        <div class="ppc-body">${[
+          info.trait ? `🌿 <b>性質</b>\n${info.trait}` : '',
+          info.care  ? `💧 <b>育て方のコツ</b>\n${info.care}` : '',
+          info.warning ? `⚠️ <b>よくある失敗</b>\n${info.warning}` : '',
+          info.season  ? `${SEASON_EMOJI} <b>今の季節（${SEASON_JA}）の注意</b>\n${info.season}` : '',
+        ].filter(Boolean).join('\n\n')}</div>
+      </div>
+      <p style="font-size:11px;color:var(--ink-3);text-align:center;line-height:1.6;">詳細は植物カードの「詳細」から<br>いつでも確認できます</p>`;
+  } catch {
+    document.getElementById('prof-body').innerHTML = `
+      <div class="plant-profile-card">
+        <div class="ppc-head">
+          <span class="ppc-cat">${CAT_ICON[cat]} ${CAT_LABEL[cat]}</span>
+          <span class="ppc-freq">推奨 ${freq}日ごと</span>
+        </div>
+        <div class="ppc-body">💧 <b>水やり目安</b>\n${CAT_LABEL[cat]}グループ。${SEASON_JA}は${freq}日ごとが目安です。\n\n土の表面が乾いてからたっぷりと水やりするのが基本です。</div>
+      </div>`;
+  }
+}
+
+// ═══════════════════════════════════════
+//  ② リマインドバナー / 今日の水やりシート
+// ═══════════════════════════════════════
+function checkRemind() {
+  // 当日すでに確認済みならスキップ
+  if (localStorage.getItem('mz_remind_dismissed') === TODAY_STR) return;
+  const urgent = plants.filter(p => getStatus(daysSince(p.lastWater), p) === 'urgent');
+  const soon   = plants.filter(p => getStatus(daysSince(p.lastWater), p) === 'soon');
+  if (urgent.length + soon.length === 0) return;
+  // そのままポップアップを開く
+  openTodaySheet();
+}
+
+function dismissRemind(e) {
+  if (e) e.stopPropagation();
+  localStorage.setItem('mz_remind_dismissed', TODAY_STR);
+}
+
+function openTodaySheet() {
+  const urgent = plants.map((p,i) => ({...p,_i:i,_d:daysSince(p.lastWater),_st:'urgent'})).filter(p => getStatus(p._d,p)==='urgent');
+  const soon   = plants.map((p,i) => ({...p,_i:i,_d:daysSince(p.lastWater),_st:'soon'})).filter(p => getStatus(p._d,p)==='soon');
+  const list   = [...urgent, ...soon].sort((a,b) => b._d - a._d);
+  const u = urgent.length, s = soon.length;
+  document.getElementById('today-sub').textContent =
+    [u > 0 ? `要水やり ${u}株` : '', s > 0 ? `もうすぐ ${s}株` : ''].filter(Boolean).join('  ·  ');
+  document.getElementById('today-list').innerHTML = list.map(p => {
+    const st = p._st;
+    const iconHtml = p.photo
+      ? `<div class="ti-icon"><img src="${p.photo}" alt="${p.name}"></div>`
+      : `<div class="ti-icon">${getPlantIcon(p)}</div>`;
+    const daysText = p._d === 9999 ? '未実施' : `${p._d}日経過`;
+    const freq = getRecommendedFreq(p);
+    return `<div class="today-item ${st}" onclick="closeOvD('ov-today');setTimeout(()=>openWater(${p._i}),180)">
+      ${iconHtml}
+      <div class="ti-body">
+        <div class="ti-name">${p.name}</div>
+        <div class="ti-meta">${CAT_ICON[p.cat||'B']} ${CAT_LABEL[p.cat||'B']}  ·  推奨${freq}日ごと</div>
+      </div>
+      <div class="ti-days">${daysText}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('ov-today').classList.add('open');
+}
+
+// ═══════════════════════════════════════
+//  ③ AI状態診断
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+//  AI診断：モード管理
+// ═══════════════════════════════════════
+let diagMode = 'history'; // 'history' or 'photo'
+let diagPhotoB64 = null;
+
+function setDiagMode(mode) {
+  diagMode = mode;
+  document.getElementById('diag-mode-history').classList.toggle('active', mode === 'history');
+  document.getElementById('diag-mode-photo').classList.toggle('active', mode === 'photo');
+  document.getElementById('diag-photo-area').style.display = mode === 'photo' ? 'block' : 'none';
+  document.getElementById('diag-body').innerHTML = '';
+  document.getElementById('diag-limit-msg').textContent = '';
+}
+
+function handleDiagPhoto(e) {
+  const f = e.target.files[0]; if (!f) return;
+  compressImage(f, 800, 0.85, b64 => {
+    diagPhotoB64 = b64;
+    const th = document.getElementById('diag-photo-thumb');
+    th.src = b64; th.classList.add('show');
+    document.getElementById('diag-photo-text').textContent = '写真を選択済み';
+  });
+}
+
+async function openDiagnose() {
+  if (!requirePremium('AI状態診断', 'AIが水やり履歴や葉の写真から今の状態を診断します')) return;
+  if (detailIdx === null) return;
+  const p = plants[detailIdx];
+
+  diagMode = 'history';
+  diagPhotoB64 = null;
+  document.getElementById('diag-mode-history').classList.add('active');
+  document.getElementById('diag-mode-photo').classList.remove('active');
+  document.getElementById('diag-photo-area').style.display = 'none';
+  const th = document.getElementById('diag-photo-thumb');
+  th.src = ''; th.classList.remove('show');
+  document.getElementById('diag-photo-text').textContent = '葉の写真をタップして選択';
+  document.getElementById('diag-photo-input').value = '';
+  document.getElementById('diag-limit-msg').textContent = '';
+  document.getElementById('diag-body').innerHTML = '';
+
+  const iconEl = document.getElementById('diag-icon');
+  if (p.photo) { iconEl.innerHTML = `<img src="${p.photo}" style="width:48px;height:48px;object-fit:cover;border-radius:10px;">`; }
+  else { iconEl.textContent = getPlantIcon(p) || '🌿'; }
+  document.getElementById('diag-name').textContent = p.name;
+  document.getElementById('ov-diagnose').classList.add('open');
+}
+
+async function runDiagnose() {
+  if (detailIdx === null) return;
+  const p = plants[detailIdx];
+
+  // 1日1回制限チェック（写真診断モード）
+  if (diagMode === 'photo') {
+    const limitKey = `mz_diag_${p.name}_${TODAY_STR}`;
+    if (localStorage.getItem(limitKey)) {
+      document.getElementById('diag-limit-msg').textContent = '写真診断は1植物につき1日1回です（本日実施済み）';
+      return;
+    }
+    if (!diagPhotoB64) { toast('葉の写真を選択してください'); return; }
+  }
+
+  const btn = document.getElementById('diag-run-btn');
+  btn.disabled = true;
+  document.getElementById('diag-body').innerHTML = '<div class="ppc-loading">🔍 AIが診断中…</div>';
+
+  const cat = p.cat || 'B';
+  const d = daysSince(p.lastWater);
+  const freq = getRecommendedFreq(p);
+  const st = getStatus(d, p);
+  const locHumId = (() => { const l = locations.find(x => x.id === p.loc); return (l && l.humidity) ? l.humidity : humidity; })();
+
+  // 過去3ヶ月の履歴をまとめる
+  const threeMonthsAgo = new Date(TODAY); threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const recentHist = (p.history || [])
+    .filter(h => h.date && new Date(h.date) >= threeMonthsAgo)
+    .map(h => {
+      const tempStr = (h.tempMax !== null && h.tempMax !== undefined) ? ` 気温${h.tempMax}°/${h.tempMin}°` : '';
+      return `${fmtFull(h.date)}:${h.additive||'なし'}${tempStr}${h.eval ? ` 評価★${h.eval.score}` : ''}`;
+    }).join('\n') || 'なし';
+
+  try {
+    let messages;
+    if (diagMode === 'photo') {
+      const b64 = diagPhotoB64.replace(/^data:image\/[a-z]+;base64,/, '');
+      messages = [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
+          { type: 'text', text: `観葉植物「${p.name}」の葉の写真から状態を診断してください。
+グループ:${CAT_LABEL[cat]} 季節:${SEASON_JA} 湿度:${HUM_LABEL[locHumId]}
+最終水やりから${d===9999?'未実施':d+'日'} / 推奨${freq}日ごと
+過去3ヶ月の水やり履歴:\n${recentHist}
+JSON形式のみ: {"status":"葉の外観から読み取れる状態を2文で","action":"今すぐやるべきことを1文で","tip":"写真から気づいた具体的なアドバイスを1〜2文で","next":"次回水やりの目安を具体的に","historyInsight":"水やり履歴のパターンから気づいたことを1文で"}` }
+        ]
+      }];
+    } else {
+      messages = [{
+        role: 'user',
+        content: `観葉植物「${p.name}」の状態を水やり履歴から診断してください。
+グループ:${CAT_LABEL[cat]} 季節:${SEASON_JA} 湿度:${HUM_LABEL[locHumId]}
+最終水やりから${d===9999?'未実施':d+'日'} / 推奨${freq}日ごと / ステータス:${st==='urgent'?'要水やり':st==='soon'?'もうすぐ':'良好'}
+過去3ヶ月の水やり履歴:\n${recentHist}
+JSON形式のみ: {"status":"現在の状態を2文で","action":"今すぐやるべきことを1文で","tip":"この植物と季節に特化したケアのコツを1〜2文で","next":"次回水やりの目安を具体的に","historyInsight":"3ヶ月の水やりパターンから気づいた傾向や改善点を1〜2文で"}`
+      }];
+    }
+
+    const res = await fetch('/api/claude', {
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:500, messages })
+    });
+    const data = await res.json();
+    const m = data.content?.[0]?.text?.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('no json');
+    const r = JSON.parse(m[0]);
+
+    // 1日1回制限を記録（写真診断のみ）
+    if (diagMode === 'photo') {
+      localStorage.setItem(`mz_diag_${p.name}_${TODAY_STR}`, '1');
+    }
+
+    const html = `
+      ${diagMode === 'photo' ? '<div style="font-size:10px;color:var(--water);text-align:center;margin-bottom:8px;">📷 写真から診断</div>' : ''}
+      <div class="diagnose-result">
+        <div class="dr-head">📊 現在の状態</div>${r.status || ''}
+      </div>
+      <div class="diagnose-result" style="background:${st==='urgent'?'var(--urgent-pale)':st==='soon'?'var(--soon-pale)':'var(--green-pale)'};border-color:${st==='urgent'?'#ddc0bc':st==='soon'?'#ddd0a0':'#b8d8b8'};">
+        <div class="dr-head" style="color:${st==='urgent'?'var(--urgent)':st==='soon'?'var(--soon)':'var(--green)'};">⚡ 今すぐやること</div>${r.action || ''}
+      </div>
+      <div class="diagnose-result">
+        <div class="dr-head">💡 ケアのコツ</div>${r.tip || ''}
+      </div>
+      <div class="diagnose-result" style="background:var(--paper-2);border-color:var(--paper-3);">
+        <div class="dr-head" style="color:var(--ink-2);">📅 次回水やりの目安</div>${r.next || `約${Math.max(1, freq - d)}日後`}
+      </div>
+      ${r.historyInsight ? `<div class="diagnose-result" style="background:var(--water-pale);border-color:#b8d4e8;">
+        <div class="dr-head" style="color:var(--water);">📈 水やり履歴からの洞察</div>${r.historyInsight}
+      </div>` : ''}`;
+
+    document.getElementById('diag-body').innerHTML = html;
+    // 詳細シートの診断結果も更新
+    const diagResultEl = document.getElementById('det-diagnose-result');
+    diagResultEl.innerHTML = html;
+    diagResultEl.style.display = 'block';
+    document.getElementById('det-diagnose-btn').textContent = '🔄 再診断する';
+  } catch {
+    document.getElementById('diag-body').innerHTML = `<div class="diagnose-result"><div class="dr-head">📊 状態診断</div>${
+      st === 'urgent' ? `水やりが${d-freq}日超過しています。できるだけ早く水やりしてください。` :
+      st === 'soon'   ? `あと${freq-d}日ほどで水やりのタイミングです。` :
+      `現在は良好な状態です。次回水やりまで約${freq-d}日あります。`
+    }</div>`;
+  }
+  btn.disabled = false;
+}
+
+// ═══════════════════════════════════════
+//  FREEMIUM
+// ═══════════════════════════════════════
+const FREE_PLANT_LIMIT = 5;
+
+// ★ここをfalseにするとリリース版（無料制限あり）
+// ★trueにするとベータ版（全機能解放）
+function loadIsPremium() {
+  // 将来: サーバー側のセッション検証に差し替え
+  const v = localStorage.getItem('mz_premium');
+  if (v === 'true') return true;
+  if (v === 'false') return false;
+  return true; // デフォルト: ベータ版は全開放
+}
+let isPremium = loadIsPremium();
+
+function requirePremium(title, desc) {
+  if (isPremium) return true;
+  document.getElementById('prem-gate-title').textContent = title || 'プレミアム機能です';
+  document.getElementById('prem-gate-desc').textContent  = desc  || 'この機能はプレミアムプランでご利用いただけます';
+  document.getElementById('ov-premium').classList.add('open');
+  return false;
+}
+
+function canAddPlant() {
+  if (isPremium) return true;
+  return plants.length < FREE_PLANT_LIMIT;
+}
+
+function updatePlantLimitBar() {
+  const bar = document.getElementById('plant-limit-bar');
+  if (isPremium) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  const n = plants.length;
+  const pct = Math.min(100, Math.round(n / FREE_PLANT_LIMIT * 100));
+  document.getElementById('plb-count').textContent = n;
+  const fill = document.getElementById('plb-fill');
+  fill.style.width = pct + '%';
+  fill.className = 'plb-fill' + (pct >= 100 ? ' full' : pct >= 70 ? ' warn' : '');
+  document.getElementById('plb-msg').innerHTML =
+    n >= FREE_PLANT_LIMIT
+      ? `<span style="color:var(--urgent);font-weight:700;">上限に達しました</span>`
+      : `無料プラン（残り${FREE_PLANT_LIMIT - n}株）`;
+}
+
+function renderPremiumSettings() {
+  const title = document.getElementById('premium-settings-title');
+  const body  = document.getElementById('premium-settings-body');
+  if (isPremium) {
+    title.textContent = '👑 プレミアムプラン（有効）';
+    body.innerHTML = `
+      <p style="font-size:12px;color:var(--green-2);font-weight:700;margin-bottom:10px;">✅ すべての機能をご利用いただけます</p>
+      <p style="font-size:11px;color:var(--ink-3);line-height:1.7;">ベータ版のため現在は全機能を無料でお試しいただけます。正式リリース時にプレミアムプランの詳細をお知らせします。</p>
+      <button onclick="localStorage.setItem('mz_premium','false');isPremium=false;updatePlantLimitBar();renderPremiumSettings();render();"
+        style="margin-top:10px;font-size:11px;color:var(--ink-3);background:none;border:none;cursor:pointer;text-decoration:underline;">
+        無料版の表示を確認する（テスト用）
+      </button>`;
+  } else {
+    title.textContent = '👑 プレミアムプランにアップグレード';
+    body.innerHTML = `
+      <p style="font-size:11px;color:var(--ink-3);line-height:1.7;margin-bottom:12px;">プレミアムプランで全機能が使えます。現在ベータ版のため無料でお試しいただけます。</p>
+      <button onclick="localStorage.setItem('mz_premium','true');isPremium=true;updatePlantLimitBar();renderPremiumSettings();render();toast('👑 プレミアム有効化（テスト）');"
+        style="width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:'Shippori Mincho',serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.06em;">
+        👑 プレミアムにアップグレード（ベータ）
+      </button>`;
+  }
+}
+
+// ═══════════════════════════════════════
+//  詳細補正データ（旧版から復活）
+// ═══════════════════════════════════════
+const SOIL_PRESETS = [
+  { id:'standard',    label:'一般的な培養土',       icon:'🌱', mult:1.0,  desc:'市販の観葉植物用土・標準' },
+  { id:'organic',     label:'有機質培養土',          icon:'🌿', mult:1.15, desc:'腐葉土・バーク堆肥多め・保水性高め' },
+  { id:'inorganic',   label:'無機質培養土',          icon:'🪨', mult:0.85, desc:'赤玉土・軽石・パーライト多め・乾きやすい' },
+  { id:'moss',        label:'水苔',                  icon:'🌾', mult:1.30, desc:'洋ラン・着生植物向け・保水性非常に高め' },
+  { id:'drain_heavy', label:'排水性重視ブレンド',    icon:'💧', mult:0.80, desc:'パーライト・日向土多め' },
+  { id:'water_heavy', label:'保水性重視ブレンド',    icon:'💦', mult:1.20, desc:'ピートモス・ヤシ殻繊維多め' },
+];
+const POT_TYPES = [
+  { id:'plastic',    label:'通常プラスチック鉢', icon:'🪣', mult:1.0  },
+  { id:'slit',       label:'スリット鉢',         icon:'🔲', mult:0.85 },
+  { id:'terracotta', label:'素焼き鉢',           icon:'🏺', mult:0.85 },
+  { id:'ceramic',    label:'陶器・グレーズ鉢',   icon:'🫙', mult:1.15 },
+];
+const POT_SIZES = [
+  { id:'s3',  label:'3号（直径9cm）',        mult:0.80 },
+  { id:'s45', label:'4〜5号（12〜15cm）',    mult:0.90 },
+  { id:'s67', label:'6〜7号（18〜21cm）標準', mult:1.00 },
+  { id:'s89', label:'8〜9号（24〜27cm）',    mult:1.15 },
+  { id:'s10', label:'10号以上（30cm〜）',    mult:1.30 },
+];
+const LIGHT_OPTIONS = [
+  { id:'direct', label:'直射日光',     icon:'☀️', mult:0.80 },
+  { id:'bright', label:'明るい間接光', icon:'🌤', mult:1.00 },
+  { id:'semi',   label:'半日陰',       icon:'⛅', mult:1.15 },
+  { id:'shade',  label:'明るい日陰',   icon:'🌥', mult:1.25 },
+];
+
+function getDetailMult(p) {
+  if (!isPremium) return 1.0;
+  let m = 1.0;
+  const soil = SOIL_PRESETS.find(s => s.id === p.soilType);
+  if (soil) m *= soil.mult;
+  // 用土カスタム補正（スライダー値：0.7〜1.5）
+  if (p.soilCustomMult && p.soilCustomMult !== 1.0) m *= p.soilCustomMult;
+  const pot  = POT_TYPES.find(t => t.id === p.potType);
+  if (pot)  m *= pot.mult;
+  const size = POT_SIZES.find(s => s.id === p.potSize);
+  if (size) m *= size.mult;
+  const light = LIGHT_OPTIONS.find(l => l.id === p.light);
+  if (light) m *= light.mult;
+  return m;
+}
+
+// getRecommendedFreqに詳細補正を統合
+const _origGetRecommendedFreq = getRecommendedFreq;
+// 上書き
+function getRecommendedFreq(p) {
+  const cat = p.cat || KNOWN_CATS[p.name] || 'B';
+  const base = BASE_FREQ[cat][SEASON];
+  const locHum = (() => {
+    if (!p.loc) return humidity;
+    const loc = locations.find(l => l.id === p.loc);
+    return (loc && loc.humidity) ? loc.humidity : humidity;
+  })();
+  const hm = HUM_MULT[locHum] || 1.0;
+  const dm = getDetailMult(p);
+  return Math.max(2, Math.round(base * hm * dm));
+}
+
+// ─── 用土スライダー関数 ───────────────────
+function toggleSoilSlider() {
+  const wrap = document.getElementById('soil-slider-wrap');
+  const icon = document.getElementById('soil-slider-toggle-icon');
+  const open = wrap.style.display === 'none';
+  wrap.style.display = open ? 'block' : 'none';
+  icon.textContent = open ? '▼' : '▶';
+}
+function onSoilSliderInput(val) {
+  const v = parseInt(val);
+  const mult = (1.0 + v * 0.05).toFixed(2);
+  document.getElementById('ed-soilCustomMult').value = mult;
+  const pct = Math.round(v * 5);
+  document.getElementById('soil-slider-label').textContent =
+    v === 0 ? '調整なし' : v > 0 ? `+${pct}% 乾きにくい` : `${pct}% 乾きやすい`;
+}
+
+// 詳細補正フォームをレンダリング
+function renderDetailCompensation(p) {
+  const el = document.getElementById('ed-premium-fields');
+  const badge = document.getElementById('ed-prem-badge');
+  if (!isPremium) {
+    badge.style.display = '';
+    el.innerHTML = `
+      <div style="background:var(--paper-2);border:1px dashed var(--paper-3);border-radius:8px;padding:12px 14px;text-align:center;">
+        <p style="font-size:12px;color:var(--ink-3);margin-bottom:8px;">用土・鉢タイプ・鉢サイズ・日当たりで<br>水やり頻度をより正確に計算できます</p>
+        <button onclick="requirePremium('詳細頻度補正','用土・鉢・日当たりで水やり頻度をより正確に計算できます')" style="padding:7px 18px;border-radius:20px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">
+          🔒 プレミアムで解放
+        </button>
+      </div>`;
+    return;
+  }
+  badge.style.display = 'none';
+
+  function envCards(groupId, options, currentVal, field) {
+    return `<div class="env-card-group" id="${groupId}">` +
+      options.map(o => `
+        <button type="button" class="env-card ${o.id === currentVal ? 'active' : ''}"
+          data-val="${o.id}" onclick="selectEnvCardEd('${groupId}','${o.id}','${field}')">
+          <span class="ec-icon">${o.icon || ''}</span>
+          <span><div class="ec-title">${o.label}</div>${o.desc ? `<div class="ec-desc">${o.desc}</div>` : ''}</span>
+        </button>`).join('') +
+      '</div>';
+  }
+
+  el.innerHTML = `
+    <div class="form-group">
+      <label class="form-label">🌱 用土</label>
+      ${envCards('ed-soil-group', SOIL_PRESETS, p.soilType || '', 'soilType')}
+      <input type="hidden" id="ed-soilType" value="${p.soilType || ''}">
+      <!-- 細かく調整する（折りたたみ） -->
+      <button type="button" onclick="toggleSoilSlider()" style="margin-top:8px;background:none;border:none;color:var(--water);font-size:11px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px;">
+        <span id="soil-slider-toggle-icon">▶</span> さらに細かく乾き具合を調整する
+      </button>
+      <div id="soil-slider-wrap" style="display:none;margin-top:10px;background:var(--paper-2);border-radius:10px;padding:12px 14px;border:1px solid var(--paper-3);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--ink-3);">乾き具合の微調整</span>
+          <span style="font-size:12px;font-weight:700;color:var(--ink);" id="soil-slider-label">${p.soilCustomMult ? Math.round((p.soilCustomMult - 1) * 100) > 0 ? '+' + Math.round((p.soilCustomMult - 1) * 100) + '%乾きにくい' : Math.round((p.soilCustomMult - 1) * 100) + '%乾きやすい' : '調整なし'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:10px;color:var(--ink-3);white-space:nowrap;">乾きやすい</span>
+          <input type="range" id="soil-custom-slider" min="-4" max="4" step="1"
+            value="${p.soilCustomMult ? Math.round((p.soilCustomMult - 1) / 0.05) : 0}"
+            style="flex:1;" oninput="onSoilSliderInput(this.value)">
+          <span style="font-size:10px;color:var(--ink-3);white-space:nowrap;">乾きにくい</span>
+        </div>
+        <div style="font-size:10px;color:var(--ink-3);margin-top:6px;line-height:1.6;">
+          プリセットより実際の土が乾きやすい・乾きにくいと感じる場合に調整してください。<br>
+          中央（0）＝プリセット通り
+        </div>
+        <input type="hidden" id="ed-soilCustomMult" value="${p.soilCustomMult || 1.0}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">🪣 鉢タイプ</label>
+      ${envCards('ed-pot-group', POT_TYPES, p.potType || '', 'potType')}
+      <input type="hidden" id="ed-potType" value="${p.potType || ''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">⬜ 鉢サイズ</label>
+      ${envCards('ed-size-group', POT_SIZES, p.potSize || '', 'potSize')}
+      <input type="hidden" id="ed-potSize" value="${p.potSize || ''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">☀️ 日当たり</label>
+      ${envCards('ed-light-group', LIGHT_OPTIONS, p.light || '', 'light')}
+      <input type="hidden" id="ed-light" value="${p.light || ''}">
+    </div>`;
+}
+
+function selectEnvCardEd(groupId, val, field) {
+  document.querySelectorAll(`#${groupId} .env-card`).forEach(b => b.classList.toggle('active', b.dataset.val === val));
+  const hiddenId = 'ed-' + field;
+  const el = document.getElementById(hiddenId);
+  if (el) el.value = val;
+}
+
+// ═══════════════════════════════════════
+//  植え替え評価AI（プレミアム）
+// ═══════════════════════════════════════
+async function openRepotEval(idx) {
+  if (!requirePremium('植え替え評価（AI）', 'AIが植え替え時期・用土・鉢の組み合わせを評価し、アドバイスをします')) return;
+  const p = plants[idx];
+  if (!p.repot) { toast('植え替え年月を先に入力してください'); return; }
+
+  const iconEl = document.getElementById('repot-eval-icon');
+  iconEl.textContent = p.photo ? '' : (getPlantIcon(p) || '🌿');
+  if (p.photo) iconEl.innerHTML = `<img src="${p.photo}" style="width:48px;height:48px;object-fit:cover;border-radius:10px;">`;
+  document.getElementById('repot-eval-name').textContent = p.name;
+  document.getElementById('repot-eval-body').innerHTML = '<div class="ppc-loading">🤔 AIが評価中…</div>';
+  document.getElementById('ov-repot-eval').classList.add('open');
+
+  const cat = p.cat || 'B';
+  const repotMonth = parseInt((p.repot || '').split('-')[1] || MONTH);
+  const repotSeason = repotMonth >= 3 && repotMonth <= 5 ? '春（最適）' :
+    repotMonth >= 6 && repotMonth <= 9 ? '夏（注意）' :
+    repotMonth >= 10 && repotMonth <= 11 ? '秋（やや不向き）' : '冬（要注意）';
+  const soilLabel = SOIL_PRESETS.find(s => s.id === p.soilType)?.label || '未設定';
+  const potLabel  = POT_TYPES.find(t => t.id === p.potType)?.label   || '未設定';
+  const sizeLabel = POT_SIZES.find(s => s.id === p.potSize)?.label   || '未設定';
+
+  const prompt = `観葉植物の専門家として植え替えを評価してください。
+植物:${p.name} グループ:${CAT_LABEL[cat]} 植え替え時期:${p.repot}(${repotSeason})
+用土:${soilLabel} 鉢タイプ:${potLabel} 鉢サイズ:${sizeLabel}
+JSON形式のみ: {"score":1-5,"scoreLabel":"一言","comment":"植え替え時期・用土・鉢の評価と植え替え後のケアアドバイスを3〜4文で"}`;
+
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, messages:[{role:'user',content:prompt}] })
+    });
+    const data = await res.json();
+    const m = data.content?.[0]?.text?.match(/\{[\s\S]*\}/);
+    const r = m ? JSON.parse(m[0]) : null;
+    if (r) {
+      document.getElementById('repot-eval-body').innerHTML = `
+        <div class="eval-box">
+          <div class="eval-stars">${'⭐'.repeat(r.score)}</div>
+          <div class="eval-label">${r.scoreLabel}</div>
+          <div class="eval-comment">${r.comment}</div>
+        </div>`;
+      plants[idx].repotComment = r;
+      savePlants();
+    }
+  } catch {
+    document.getElementById('repot-eval-body').innerHTML =
+      `<div class="ppc-loading" style="color:var(--ink-3);">評価を取得できませんでした</div>`;
+  }
+}
+
+// ═══════════════════════════════════════
+//  天気・気温 (Open-Meteo / 無料・APIキー不要)
+// ═══════════════════════════════════════
+const WX_ICONS = {
+  0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',
+  51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',
+  71:'🌨',73:'🌨',75:'🌨',80:'🌦',81:'🌧',82:'⛈',
+  95:'⛈',96:'⛈',99:'⛈'
+};
+
+function loadWeatherCity() { return localStorage.getItem('pw_weather_city') || ''; }
+function saveWeatherCity() {
+  const city = document.getElementById('weather-city-input').value.trim();
+  if (!city) { toast('市区町村名を入力してください'); return; }
+  localStorage.setItem('pw_weather_city', city);
+  document.getElementById('weather-city-status').textContent = `✅ 「${city}」を設定しました`;
+  if (isPremium) fetchWeatherAndShow(city);
+}
+
+// 今日の気温を取得（水やり記録時に使用）
+async function fetchTodayTemps() {
+  const city = loadWeatherCity();
+  if (!city) return { max: null, min: null };
+  try {
+    const geoRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1&accept-language=ja`,
+      { headers: { 'User-Agent': 'MizuyariTecho/2.0' } }
+    );
+    const geoData = await geoRes.json();
+    if (!geoData.length) return { max: null, min: null };
+    const { lat, lon } = geoData[0];
+    const wxRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&forecast_days=1`
+    );
+    const wxData = await wxRes.json();
+    return {
+      max: Math.round(wxData.daily.temperature_2m_max[0]),
+      min: Math.round(wxData.daily.temperature_2m_min[0]),
+    };
+  } catch { return { max: null, min: null }; }
+}
+
+// 天気予報を取得してUIに反映（プレミアム）
+async function fetchWeatherAndShow(city) {
+  if (!isPremium || !city) return;
+  try {
+    const geoRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1&accept-language=ja`,
+      { headers: { 'User-Agent': 'MizuyariTecho/2.0' } }
+    );
+    const geoData = await geoRes.json();
+    if (!geoData.length) return;
+    const { lat, lon } = geoData[0];
+
+    // 3日分の予報を取得
+    const wxRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Asia%2FTokyo&forecast_days=3`
+    );
+    const wxData = await wxRes.json();
+    const d = wxData.daily;
+    const todayCode = d.weather_code[0];
+    const todayMax  = Math.round(d.temperature_2m_max[0]);
+    const todayMin  = Math.round(d.temperature_2m_min[0]);
+    const tomorrowRain = d.precipitation_sum[1] > 1.0; // 翌日降水量1mm超
+    const todayRain    = d.precipitation_sum[0] > 1.0;
+
+    // ヘッダー天気表示
+    const wxHeader = document.getElementById('weather-header');
+    wxHeader.style.display = 'flex';
+    document.getElementById('wx-icon').textContent = WX_ICONS[todayCode] || '🌡';
+    document.getElementById('wx-temp').textContent = `${todayMax}°/${todayMin}°`;
+
+    // 天気バナー
+    const banner = document.getElementById('weather-banner');
+    banner.style.display = 'flex';
+    document.getElementById('wb-icon').textContent = WX_ICONS[todayCode] || '🌡';
+    document.getElementById('wb-temps').textContent = `${todayMax}° / ${todayMin}°`;
+    document.getElementById('wb-desc').textContent = city;
+
+    // 水やりアドバイス
+    const adviceEl = document.getElementById('wb-advice');
+    let adviceText = '', adviceClass = '';
+    if (todayRain) {
+      adviceText = '🌧 雨天\n屋外は水やり不要';
+      adviceClass = 'rain';
+    } else if (tomorrowRain) {
+      adviceText = '🌦 明日雨予報\n早めに水やりを';
+      adviceClass = '';
+    } else if (todayMax >= 30) {
+      adviceText = `🌡 高温(${todayMax}°)\n水やり頻度UP`;
+      adviceClass = '';
+    } else if (todayMax <= 10) {
+      adviceText = `❄️ 低温(${todayMax}°)\n水やり控えめに`;
+      adviceClass = '';
+    } else {
+      adviceText = '✅ 良好な天気\n通常通りに';
+      adviceClass = 'good';
+    }
+    adviceEl.textContent = adviceText;
+    adviceEl.className = 'wb-advice' + (adviceClass ? ' ' + adviceClass : '');
+
+    // 翌日雨のときリマインドに反映（今日の水やり優先度を上げる）
+    if (tomorrowRain) {
+      localStorage.removeItem('mz_remind_dismissed'); // 当日フラグをリセットしてポップアップ再表示
+      setTimeout(checkRemind, 800);
+    }
+
+    // キャッシュ
+    localStorage.setItem('mz_weather_cache', JSON.stringify({
+      date: TODAY_STR, code: todayCode, max: todayMax, min: todayMin,
+      tomorrowRain, city
+    }));
+  } catch { /* 失敗時はサイレント */ }
+}
+
+// ═══════════════════════════════════════
+//  最適水やり日の演算（プレミアム）
+// ═══════════════════════════════════════
+async function calcOptimalWaterDays() {
+  if (!isPremium) return;
+  const city = loadWeatherCity();
+  if (!city) return;
+  try {
+    const geoRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1&accept-language=ja`,
+      { headers: { 'User-Agent': 'MizuyariTecho/2.0' } }
+    );
+    const geoData = await geoRes.json();
+    if (!geoData.length) return;
+    const { lat, lon } = geoData[0];
+    const wxRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,precipitation_sum&timezone=Asia%2FTokyo&forecast_days=5`
+    );
+    const wxData = await wxRes.json();
+    const d = wxData.daily;
+
+    // 今日の水やりポップアップに天気考慮メモを追加
+    const todayRain = d.precipitation_sum[0] > 1.0;
+    const tomorrowRain = d.precipitation_sum[1] > 1.0;
+    const wxNote = todayRain
+      ? '🌧 今日は雨です。屋外の植物は水やり不要かもしれません。'
+      : tomorrowRain
+        ? '🌦 明日の雨予報があります。今日水やりしておくと良さそうです。'
+        : null;
+
+    // 今日の水やりシートに天気メモを注入
+    const noteEl = document.getElementById('today-wx-note');
+    if (noteEl && wxNote) {
+      noteEl.textContent = wxNote;
+      noteEl.style.display = 'block';
+    }
+
+    // 各植物の「最適水やり日」をキャッシュ
+    const optimalMap = {};
+    plants.forEach((p, i) => {
+      const dSince = daysSince(p.lastWater);
+      const freq = getRecommendedFreq(p);
+      const daysUntil = Math.max(0, freq - dSince);
+      if (daysUntil > 4) { optimalMap[i] = null; return; }
+      // daysUntil日後〜+2日の範囲で最も雨が少なく気温が高い日を選ぶ
+      let best = daysUntil, bestScore = -Infinity;
+      for (let offset = daysUntil; offset <= Math.min(daysUntil + 2, 4); offset++) {
+        const rain = d.precipitation_sum[offset] || 0;
+        const temp = d.temperature_2m_max[offset] || 20;
+        const score = temp - rain * 5; // 雨ペナルティ
+        if (score > bestScore) { bestScore = score; best = offset; }
+      }
+      optimalMap[i] = best;
+    });
+    window._optimalMap = optimalMap;
+  } catch { /* サイレント失敗 */ }
+}
+
+// ─── 今日の水やりシートに天気メモ枠を追加するためHTMLを動的に補完
+function injectWxNoteToTodaySheet() {
+  const body = document.getElementById('today-list');
+  if (!body) return;
+  if (!document.getElementById('today-wx-note')) {
+    const note = document.createElement('div');
+    note.id = 'today-wx-note';
+    note.style.cssText = 'display:none;padding:10px 14px;background:var(--water-pale);border-radius:10px;font-size:12px;color:var(--water);font-weight:700;margin-bottom:10px;line-height:1.6;';
+    body.parentElement.insertBefore(note, body);
+  }
+}
+
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+document.getElementById('hd-date').textContent = `${MONTH}/${DAY} `;
+document.getElementById('season-chip').textContent = `${SEASON_EMOJI} ${SEASON_JA}`;
+setHumidity(humidity, false);
+render();
+updatePlantLimitBar();
+updateShopDl();
+injectWxNoteToTodaySheet();
+
+// 天気取得（プレミアム & 都市設定済み）
+const _wxCity = loadWeatherCity();
+if (isPremium && _wxCity) {
+  fetchWeatherAndShow(_wxCity);
+  setTimeout(calcOptimalWaterDays, 1500);
+}
+
+// リマインドポップアップ（初回、天気取得後に実行）
+setTimeout(checkRemind, isPremium && _wxCity ? 2200 : 600);
+</script>
+</body>
+</html>
